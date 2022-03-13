@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "920913362400",
+    "project_id": "btw-app-98733",
+    "storage_bucket": "btw-app-98733.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:920913362400:android:5dab5e3891c3ba9fc67f85",
+        "android_client_info": {
+          "package_name": "solutions.near.btw"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "920913362400-k0knmp68h9stpn2hqplsq9tna20e1g40.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "solutions.near.btw",
+            "certificate_hash": "9bbb3186b2189ef16d8f272bdab59362c395cbb4"
+          }
+        },
+        {
+          "client_id": "920913362400-da4fr3oug5cout1hle253mal58kepbai.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCG_qjKIsoXEqFk5B4wQxMrpKQOe5uWmc8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "920913362400-da4fr3oug5cout1hle253mal58kepbai.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "920913362400-rbc20a1kle2t7rf0lhn42lej2h39v4p8.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "solutions.near.btw"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
