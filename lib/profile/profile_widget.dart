@@ -1,10 +1,12 @@
 import '../auth/auth_util.dart';
 import '../backend/backend.dart';
 import '../components/post_preview_card_widget.dart';
+import '../create_post/create_post_widget.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
 import '../flutter_flow/flutter_flow_util.dart';
 import '../settings/settings_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -17,6 +19,7 @@ class ProfileWidget extends StatefulWidget {
 }
 
 class _ProfileWidgetState extends State<ProfileWidget> {
+  UserPostsRecord newPost;
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -540,13 +543,61 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                               mainAxisSize: MainAxisSize.min,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
-                                      0, 0, 0, 24),
-                                  child: Text(
-                                    'My Posts',
-                                    style: FlutterFlowTheme.of(context).title2,
-                                  ),
+                                Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                          0, 0, 0, 24),
+                                      child: Text(
+                                        'My Posts',
+                                        style:
+                                            FlutterFlowTheme.of(context).title2,
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                          8, 0, 0, 0),
+                                      child: InkWell(
+                                        onTap: () async {
+                                          final userPostsCreateData =
+                                              createUserPostsRecordData(
+                                            isDraft: true,
+                                            postUser:
+                                                profileUsersRecord.reference,
+                                          );
+                                          var userPostsRecordReference =
+                                              UserPostsRecord.collection.doc();
+                                          await userPostsRecordReference
+                                              .set(userPostsCreateData);
+                                          newPost = UserPostsRecord
+                                              .getDocumentFromData(
+                                                  userPostsCreateData,
+                                                  userPostsRecordReference);
+                                          await Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  CreatePostWidget(
+                                                postRef: newPost.reference,
+                                              ),
+                                            ),
+                                          );
+
+                                          setState(() {});
+                                        },
+                                        child: Icon(
+                                          Icons.add_outlined,
+                                          color: FlutterFlowTheme.of(context)
+                                              .primaryColor,
+                                          size: 32,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                                 StreamBuilder<List<UserPostsRecord>>(
                                   stream: queryUserPostsRecord(

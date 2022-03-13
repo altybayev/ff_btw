@@ -1,7 +1,7 @@
+import '../create_post/create_post_widget.dart';
 import '../create_story/create_story_widget.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
 import '../flutter_flow/flutter_flow_util.dart';
-import '../main.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -160,7 +160,7 @@ class _CreateModalWidgetState extends State<CreateModalWidget> {
                   type: PageTransitionType.bottomToTop,
                   duration: Duration(milliseconds: 200),
                   reverseDuration: Duration(milliseconds: 200),
-                  child: NavBarPage(initialPage: 'createPost'),
+                  child: CreatePostWidget(),
                 ),
               );
             },

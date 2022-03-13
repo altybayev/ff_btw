@@ -16,6 +16,7 @@ import '../../create_your_profile/create_your_profile_widget.dart';
 import '../../forgot_password/forgot_password_widget.dart';
 import '../../home_page/home_page_widget.dart';
 import '../../post_details/post_details_widget.dart';
+import '../../create_post/create_post_widget.dart';
 import '../../choose_category/choose_category_widget.dart';
 import '../../story_details/story_details_widget.dart';
 import '../../change_password/change_password_widget.dart';
@@ -105,6 +106,9 @@ final pageBuilderMap = <String, Future<Widget> Function(Map<String, dynamic>)>{
   'postDetails': (data) async => PostDetailsWidget(
         postReference: getParameter(data, 'postReference'),
       ),
+  'createPost': (data) async => CreatePostWidget(
+        postRef: getParameter(data, 'postRef'),
+      ),
   'chooseCategory': (data) async => ChooseCategoryWidget(
         postRef: getParameter(data, 'postRef'),
       ),
@@ -134,7 +138,6 @@ final pageBuilderMap = <String, Future<Widget> Function(Map<String, dynamic>)>{
         chat: await getDocumentParameter(data, 'chat', ChatsRecord.serializer),
       ),
   'createGroupChat': (data) async => CreateGroupChatWidget(),
-  'createPost': (data) async => NavBarPage(initialPage: 'CreatePostWidget'),
   'profile': (data) async => NavBarPage(initialPage: 'ProfileWidget'),
   'postDetailsCopy': (data) async => PostDetailsCopyWidget(
         postReference: getParameter(data, 'postReference'),
