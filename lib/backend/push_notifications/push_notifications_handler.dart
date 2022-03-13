@@ -16,6 +16,7 @@ import '../../create_your_profile/create_your_profile_widget.dart';
 import '../../forgot_password/forgot_password_widget.dart';
 import '../../home_page/home_page_widget.dart';
 import '../../post_details/post_details_widget.dart';
+import '../../choose_category/choose_category_widget.dart';
 import '../../story_details/story_details_widget.dart';
 import '../../change_password/change_password_widget.dart';
 import '../../view_profile_page_other/view_profile_page_other_widget.dart';
@@ -103,6 +104,9 @@ final pageBuilderMap = <String, Future<Widget> Function(Map<String, dynamic>)>{
   'homePage': (data) async => HomePageWidget(),
   'postDetails': (data) async => PostDetailsWidget(
         postReference: getParameter(data, 'postReference'),
+      ),
+  'chooseCategory': (data) async => ChooseCategoryWidget(
+        postRef: getParameter(data, 'postRef'),
       ),
   'storyDetails': (data) async => StoryDetailsWidget(
         initialStoryIndex: getParameter(data, 'initialStoryIndex'),

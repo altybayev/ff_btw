@@ -1,6 +1,7 @@
 import '../auth/auth_util.dart';
 import '../backend/backend.dart';
 import '../backend/firebase_storage/storage.dart';
+import '../choose_category/choose_category_widget.dart';
 import '../flutter_flow/flutter_flow_icon_button.dart';
 import '../flutter_flow/flutter_flow_media_display.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
@@ -76,15 +77,35 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                 size: 30,
               ),
               onPressed: () async {
-                if (currentPost.reference != null) {
-                  await currentPost.reference.delete();
-                }
-                await Navigator.pushAndRemoveUntil(
+                var confirmDialogResponse = await showDialog<bool>(
+                      context: context,
+                      builder: (alertDialogContext) {
+                        return AlertDialog(
+                          title: Text('Are you sure?'),
+                          content:
+                              Text('If you exit all post data will be lost'),
+                          actions: [
+                            TextButton(
+                              onPressed: () =>
+                                  Navigator.pop(alertDialogContext, false),
+                              child: Text('Cancel'),
+                            ),
+                            TextButton(
+                              onPressed: () =>
+                                  Navigator.pop(alertDialogContext, true),
+                              child: Text('Discard'),
+                            ),
+                          ],
+                        );
+                      },
+                    ) ??
+                    false;
+                await currentPost.reference.delete();
+                await Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => NavBarPage(initialPage: 'home'),
+                    builder: (context) => NavBarPage(initialPage: 'profile'),
                   ),
-                  (r) => false,
                 );
               },
             ),
@@ -125,7 +146,7 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                                   controller: postTitleController,
                                   obscureText: false,
                                   decoration: InputDecoration(
-                                    labelText: 'Title',
+                                    labelText: 'Post Title',
                                     hintText: 'Enter post title...',
                                     enabledBorder: UnderlineInputBorder(
                                       borderSide: BorderSide(
@@ -151,6 +172,87 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                                   textAlign: TextAlign.start,
                                 ),
                               ),
+                              Padding(
+                                padding: EdgeInsetsDirectional.fromSTEB(
+                                    0, 16, 32, 0),
+                                child: InkWell(
+                                  onTap: () async {
+                                    await Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            ChooseCategoryWidget(
+                                          postRef: currentPost.reference,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.max,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        mainAxisSize: MainAxisSize.max,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          if (currentPost.categoryName !=
+                                                  null &&
+                                              currentPost.categoryName != '')
+                                            StreamBuilder<UserPostsRecord>(
+                                              stream:
+                                                  UserPostsRecord.getDocument(
+                                                      currentPost.reference),
+                                              builder: (context, snapshot) {
+                                                // Customize what your widget looks like when it's loading.
+                                                if (!snapshot.hasData) {
+                                                  return Center(
+                                                    child: SizedBox(
+                                                      width: 50,
+                                                      height: 50,
+                                                      child:
+                                                          CircularProgressIndicator(
+                                                        color:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .primaryColor,
+                                                      ),
+                                                    ),
+                                                  );
+                                                }
+                                                final categoryNameUserPostsRecord =
+                                                    snapshot.data;
+                                                return Text(
+                                                  valueOrDefault<String>(
+                                                    categoryNameUserPostsRecord
+                                                        .categoryName,
+                                                    'Choose category...',
+                                                  ),
+                                                  style: FlutterFlowTheme.of(
+                                                          context)
+                                                      .title3
+                                                      .override(
+                                                        fontFamily: 'Lato',
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
+                                                );
+                                              },
+                                            ),
+                                          Icon(
+                                            Icons.keyboard_arrow_down_sharp,
+                                            color: FlutterFlowTheme.of(context)
+                                                .primaryDark,
+                                            size: 24,
+                                          ),
+                                        ],
+                                      ),
+                                      Divider(),
+                                    ],
+                                  ),
+                                ),
+                              ),
                               Row(
                                 mainAxisSize: MainAxisSize.max,
                                 mainAxisAlignment: MainAxisAlignment.start,
@@ -162,24 +264,26 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                                         .subtitle1
                                         .override(
                                           fontFamily: 'Lato',
-                                          fontSize: 21,
+                                          fontSize: 18,
                                         ),
                                   ),
-                                  FlutterFlowIconButton(
-                                    borderColor: Colors.transparent,
-                                    borderRadius: 30,
-                                    borderWidth: 1,
-                                    buttonSize: 60,
-                                    icon: Icon(
-                                      Icons.add_box_outlined,
-                                      color: FlutterFlowTheme.of(context)
-                                          .primaryColor,
-                                      size: 32,
+                                  if ((FFAppState().tagsCount) < 5)
+                                    FlutterFlowIconButton(
+                                      borderColor: Colors.transparent,
+                                      borderRadius: 30,
+                                      borderWidth: 1,
+                                      buttonSize: 60,
+                                      icon: Icon(
+                                        Icons.add_box_outlined,
+                                        color: FlutterFlowTheme.of(context)
+                                            .primaryColor,
+                                        size: 32,
+                                      ),
+                                      onPressed: () async {
+                                        setState(() => FFAppState().tagsCount =
+                                            FFAppState().tagsCount + 1);
+                                      },
                                     ),
-                                    onPressed: () {
-                                      print('IconButton pressed ...');
-                                    },
-                                  ),
                                 ],
                               ),
                               Padding(
@@ -385,14 +489,17 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                                           alignment: AlignmentDirectional(0, 0),
                                           child: FlutterFlowMediaDisplay(
                                             path: uploadedFileUrl,
-                                            imageBuilder: (path) =>
-                                                Image.network(
-                                              path,
-                                              width: MediaQuery.of(context)
-                                                  .size
-                                                  .width,
-                                              height: double.infinity,
-                                              fit: BoxFit.cover,
+                                            imageBuilder: (path) => ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                              child: Image.network(
+                                                path,
+                                                width: MediaQuery.of(context)
+                                                    .size
+                                                    .width,
+                                                height: double.infinity,
+                                                fit: BoxFit.cover,
+                                              ),
                                             ),
                                             videoPlayerBuilder: (path) =>
                                                 FlutterFlowVideoPlayer(
