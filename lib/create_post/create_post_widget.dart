@@ -182,115 +182,111 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                                   ),
                                 ],
                               ),
-                              if (currentPost.reference != null)
-                                Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
-                                      0, 16, 0, 0),
-                                  child: StreamBuilder<List<TagsRecord>>(
-                                    stream: queryTagsRecord(
-                                      queryBuilder: (tagsRecord) => tagsRecord
-                                          .where('postRef',
-                                              isEqualTo: currentPost.reference)
-                                          .orderBy('name'),
-                                    ),
-                                    builder: (context, snapshot) {
-                                      // Customize what your widget looks like when it's loading.
-                                      if (!snapshot.hasData) {
-                                        return Center(
-                                          child: SizedBox(
-                                            width: 50,
-                                            height: 50,
-                                            child: CircularProgressIndicator(
-                                              color:
-                                                  FlutterFlowTheme.of(context)
-                                                      .primaryColor,
-                                            ),
+                              Padding(
+                                padding:
+                                    EdgeInsetsDirectional.fromSTEB(0, 16, 0, 0),
+                                child: StreamBuilder<List<TagsRecord>>(
+                                  stream: queryTagsRecord(
+                                    queryBuilder: (tagsRecord) => tagsRecord
+                                        .where('postRef',
+                                            isEqualTo: currentPost.reference)
+                                        .orderBy('name'),
+                                  ),
+                                  builder: (context, snapshot) {
+                                    // Customize what your widget looks like when it's loading.
+                                    if (!snapshot.hasData) {
+                                      return Center(
+                                        child: SizedBox(
+                                          width: 50,
+                                          height: 50,
+                                          child: CircularProgressIndicator(
+                                            color: FlutterFlowTheme.of(context)
+                                                .primaryColor,
                                           ),
-                                        );
-                                      }
-                                      List<TagsRecord> columnTagsRecordList =
-                                          snapshot.data;
-                                      return Column(
-                                        mainAxisSize: MainAxisSize.max,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: List.generate(
-                                            columnTagsRecordList.length,
-                                            (columnIndex) {
-                                          final columnTagsRecord =
-                                              columnTagsRecordList[columnIndex];
-                                          return Padding(
-                                            padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    0, 0, 0, 8),
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(75),
-                                                border: Border.all(
-                                                  color: FlutterFlowTheme.of(
-                                                          context)
-                                                      .primaryColor,
-                                                  width: 1,
-                                                ),
+                                        ),
+                                      );
+                                    }
+                                    List<TagsRecord> columnTagsRecordList =
+                                        snapshot.data;
+                                    return Column(
+                                      mainAxisSize: MainAxisSize.max,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: List.generate(
+                                          columnTagsRecordList.length,
+                                          (columnIndex) {
+                                        final columnTagsRecord =
+                                            columnTagsRecordList[columnIndex];
+                                        return Padding(
+                                          padding:
+                                              EdgeInsetsDirectional.fromSTEB(
+                                                  0, 0, 0, 8),
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(75),
+                                              border: Border.all(
+                                                color:
+                                                    FlutterFlowTheme.of(context)
+                                                        .primaryColor,
+                                                width: 1,
                                               ),
-                                              child: Padding(
-                                                padding: EdgeInsetsDirectional
-                                                    .fromSTEB(16, 4, 4, 4),
-                                                child: Row(
-                                                  mainAxisSize:
-                                                      MainAxisSize.min,
-                                                  children: [
-                                                    Text(
-                                                      columnTagsRecord.name,
-                                                      style:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .subtitle1,
-                                                    ),
-                                                    Padding(
-                                                      padding:
-                                                          EdgeInsetsDirectional
-                                                              .fromSTEB(
-                                                                  8, 0, 0, 0),
-                                                      child: Container(
-                                                        width: 24,
-                                                        height: 24,
-                                                        decoration:
-                                                            BoxDecoration(
+                                            ),
+                                            child: Padding(
+                                              padding: EdgeInsetsDirectional
+                                                  .fromSTEB(16, 4, 4, 4),
+                                              child: Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Text(
+                                                    columnTagsRecord.name,
+                                                    style: FlutterFlowTheme.of(
+                                                            context)
+                                                        .subtitle1,
+                                                  ),
+                                                  Padding(
+                                                    padding:
+                                                        EdgeInsetsDirectional
+                                                            .fromSTEB(
+                                                                8, 0, 0, 0),
+                                                    child: Container(
+                                                      width: 24,
+                                                      height: 24,
+                                                      decoration: BoxDecoration(
+                                                        color:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .gray200,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(12),
+                                                      ),
+                                                      child: InkWell(
+                                                        onTap: () async {
+                                                          await columnTagsRecord
+                                                              .reference
+                                                              .delete();
+                                                        },
+                                                        child: Icon(
+                                                          Icons.close,
                                                           color: FlutterFlowTheme
                                                                   .of(context)
-                                                              .gray200,
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(12),
-                                                        ),
-                                                        child: InkWell(
-                                                          onTap: () async {
-                                                            await columnTagsRecord
-                                                                .reference
-                                                                .delete();
-                                                          },
-                                                          child: Icon(
-                                                            Icons.close,
-                                                            color: FlutterFlowTheme
-                                                                    .of(context)
-                                                                .primaryColor,
-                                                            size: 16,
-                                                          ),
+                                                              .primaryColor,
+                                                          size: 16,
                                                         ),
                                                       ),
                                                     ),
-                                                  ],
-                                                ),
+                                                  ),
+                                                ],
                                               ),
                                             ),
-                                          );
-                                        }),
-                                      );
-                                    },
-                                  ),
+                                          ),
+                                        );
+                                      }),
+                                    );
+                                  },
                                 ),
+                              ),
                               Padding(
                                 padding:
                                     EdgeInsetsDirectional.fromSTEB(0, 16, 0, 0),
