@@ -19,6 +19,10 @@ class FFAppState {
   SharedPreferences prefs;
 
   int tagsCount = 0;
+
+  bool imageUploading = false;
+
+  bool varBool = false;
 }
 
 LatLng _latLngFromString(String val) {

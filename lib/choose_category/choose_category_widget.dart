@@ -54,70 +54,89 @@ class _ChooseCategoryWidgetState extends State<ChooseCategoryWidget> {
       body: SafeArea(
         child: GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(0, 16, 0, 16),
-                  child: Text(
-                    'Tap on category',
-                    textAlign: TextAlign.start,
-                    style: FlutterFlowTheme.of(context).bodyText1,
+          child: Stack(
+            children: [
+              Container(
+                width: double.infinity,
+                height: double.infinity,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Colors.white, Color(0xFFF4F7FF)],
+                    stops: [0, 1],
+                    begin: AlignmentDirectional(-1, -0.34),
+                    end: AlignmentDirectional(1, 0.34),
                   ),
                 ),
-                FutureBuilder<List<CategoriesRecord>>(
-                  future: queryCategoriesRecordOnce(
-                    queryBuilder: (categoriesRecord) =>
-                        categoriesRecord.orderBy('name'),
-                  ),
-                  builder: (context, snapshot) {
-                    // Customize what your widget looks like when it's loading.
-                    if (!snapshot.hasData) {
-                      return Center(
-                        child: SizedBox(
-                          width: 50,
-                          height: 50,
-                          child: CircularProgressIndicator(
-                            color: FlutterFlowTheme.of(context).primaryColor,
-                          ),
-                        ),
-                      );
-                    }
-                    List<CategoriesRecord> categoriesCategoriesRecordList =
-                        snapshot.data;
-                    return Column(
-                      mainAxisSize: MainAxisSize.max,
-                      children:
-                          List.generate(categoriesCategoriesRecordList.length,
-                              (categoriesIndex) {
-                        final categoriesCategoriesRecord =
-                            categoriesCategoriesRecordList[categoriesIndex];
-                        return InkWell(
-                          onTap: () async {
-                            final userPostsUpdateData =
-                                createUserPostsRecordData(
-                              category: categoriesCategoriesRecord.reference,
-                              categoryName: categoriesCategoriesRecord.name,
-                            );
-                            await widget.postRef.update(userPostsUpdateData);
-                            Navigator.pop(context);
-                          },
-                          child: ListTile(
-                            title: Text(
-                              categoriesCategoriesRecord.name,
-                              style: FlutterFlowTheme.of(context).title3,
+              ),
+              SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: EdgeInsetsDirectional.fromSTEB(0, 16, 0, 16),
+                      child: Text(
+                        'Tap on category',
+                        textAlign: TextAlign.start,
+                        style: FlutterFlowTheme.of(context).bodyText1,
+                      ),
+                    ),
+                    FutureBuilder<List<CategoriesRecord>>(
+                      future: queryCategoriesRecordOnce(
+                        queryBuilder: (categoriesRecord) =>
+                            categoriesRecord.orderBy('name'),
+                      ),
+                      builder: (context, snapshot) {
+                        // Customize what your widget looks like when it's loading.
+                        if (!snapshot.hasData) {
+                          return Center(
+                            child: SizedBox(
+                              width: 50,
+                              height: 50,
+                              child: CircularProgressIndicator(
+                                color:
+                                    FlutterFlowTheme.of(context).primaryColor,
+                              ),
                             ),
-                            dense: false,
-                          ),
+                          );
+                        }
+                        List<CategoriesRecord> categoriesCategoriesRecordList =
+                            snapshot.data;
+                        return Column(
+                          mainAxisSize: MainAxisSize.max,
+                          children: List.generate(
+                              categoriesCategoriesRecordList.length,
+                              (categoriesIndex) {
+                            final categoriesCategoriesRecord =
+                                categoriesCategoriesRecordList[categoriesIndex];
+                            return InkWell(
+                              onTap: () async {
+                                final userPostsUpdateData =
+                                    createUserPostsRecordData(
+                                  category:
+                                      categoriesCategoriesRecord.reference,
+                                  categoryName: categoriesCategoriesRecord.name,
+                                );
+                                await widget.postRef
+                                    .update(userPostsUpdateData);
+                                Navigator.pop(context);
+                              },
+                              child: ListTile(
+                                title: Text(
+                                  categoriesCategoriesRecord.name,
+                                  style: FlutterFlowTheme.of(context).title3,
+                                ),
+                                dense: false,
+                              ),
+                            );
+                          }),
                         );
-                      }),
-                    );
-                  },
+                      },
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

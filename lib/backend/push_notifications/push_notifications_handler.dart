@@ -16,8 +16,8 @@ import '../../create_your_profile/create_your_profile_widget.dart';
 import '../../forgot_password/forgot_password_widget.dart';
 import '../../home_page/home_page_widget.dart';
 import '../../post_details/post_details_widget.dart';
-import '../../create_post/create_post_widget.dart';
 import '../../choose_category/choose_category_widget.dart';
+import '../../create_post/create_post_widget.dart';
 import '../../story_details/story_details_widget.dart';
 import '../../change_password/change_password_widget.dart';
 import '../../view_profile_page_other/view_profile_page_other_widget.dart';
@@ -31,6 +31,7 @@ import '../../all_chats_page/all_chats_page_widget.dart';
 import '../../add_chat_users/add_chat_users_widget.dart';
 import '../../create_group_chat/create_group_chat_widget.dart';
 import '../../post_details_copy/post_details_copy_widget.dart';
+import '../../test_page/test_page_widget.dart';
 
 class PushNotificationsHandler extends StatefulWidget {
   const PushNotificationsHandler(
@@ -106,10 +107,10 @@ final pageBuilderMap = <String, Future<Widget> Function(Map<String, dynamic>)>{
   'postDetails': (data) async => PostDetailsWidget(
         postReference: getParameter(data, 'postReference'),
       ),
-  'createPost': (data) async => CreatePostWidget(
+  'chooseCategory': (data) async => ChooseCategoryWidget(
         postRef: getParameter(data, 'postRef'),
       ),
-  'chooseCategory': (data) async => ChooseCategoryWidget(
+  'createPost': (data) async => CreatePostWidget(
         postRef: getParameter(data, 'postRef'),
       ),
   'storyDetails': (data) async => StoryDetailsWidget(
@@ -144,6 +145,7 @@ final pageBuilderMap = <String, Future<Widget> Function(Map<String, dynamic>)>{
         userRecord: await getDocumentParameter(
             data, 'userRecord', UsersRecord.serializer),
       ),
+  'TestPage': (data) async => TestPageWidget(),
 };
 
 bool hasMatchingParameters(Map<String, dynamic> data, Set<String> params) =>

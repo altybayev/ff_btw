@@ -69,7 +69,7 @@ class _PostPreviewCardWidgetState extends State<PostPreviewCardWidget> {
                     children: [
                       Expanded(
                         child: Text(
-                          'Techology',
+                          widget.post.categoryName,
                           style: FlutterFlowTheme.of(context)
                               .bodyText1
                               .override(
@@ -104,9 +104,21 @@ class _PostPreviewCardWidgetState extends State<PostPreviewCardWidget> {
                   ),
                   Padding(
                     padding: EdgeInsetsDirectional.fromSTEB(0, 4, 0, 0),
-                    child: Text(
-                      widget.post.postTitle,
-                      style: FlutterFlowTheme.of(context).bodyText1,
+                    child: InkWell(
+                      onTap: () async {
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => PostDetailsWidget(
+                              postReference: widget.post.reference,
+                            ),
+                          ),
+                        );
+                      },
+                      child: Text(
+                        widget.post.postTitle,
+                        style: FlutterFlowTheme.of(context).bodyText1,
+                      ),
                     ),
                   ),
                   Padding(
@@ -124,7 +136,13 @@ class _PostPreviewCardWidgetState extends State<PostPreviewCardWidget> {
                         Padding(
                           padding: EdgeInsetsDirectional.fromSTEB(4, 0, 0, 0),
                           child: Text(
-                            '564',
+                            valueOrDefault<String>(
+                              formatNumber(
+                                widget.post.numLikes,
+                                formatType: FormatType.compact,
+                              ),
+                              '0',
+                            ),
                             style:
                                 FlutterFlowTheme.of(context).bodyText1.override(
                                       fontFamily: 'Lato',
@@ -143,20 +161,16 @@ class _PostPreviewCardWidgetState extends State<PostPreviewCardWidget> {
                         Padding(
                           padding: EdgeInsetsDirectional.fromSTEB(4, 0, 0, 0),
                           child: Text(
-                            '1 hr ago',
+                            valueOrDefault<String>(
+                              dateTimeFormat(
+                                  'relative', widget.post.timePosted),
+                              '...',
+                            ),
                             style:
                                 FlutterFlowTheme.of(context).bodyText1.override(
                                       fontFamily: 'Lato',
                                       fontSize: 12,
                                     ),
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(16, 0, 0, 0),
-                          child: Icon(
-                            Icons.turned_in,
-                            color: FlutterFlowTheme.of(context).primaryColor,
-                            size: 16,
                           ),
                         ),
                       ],
