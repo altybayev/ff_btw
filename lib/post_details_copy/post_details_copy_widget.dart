@@ -143,8 +143,7 @@ class _PostDetailsCopyWidgetState extends State<PostDetailsCopyWidget> {
                                               child: Container(
                                                 height: 250,
                                                 child: DeletePostWidget(
-                                                  postParameters:
-                                                      postDetailsCopyUserPostsRecord,
+                                                  postRef: widget.postReference,
                                                 ),
                                               ),
                                             );

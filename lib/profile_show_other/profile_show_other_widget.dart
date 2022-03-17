@@ -1,31 +1,37 @@
 import '../auth/auth_util.dart';
 import '../backend/backend.dart';
-import '../components/post_preview_card_widget.dart';
-import '../create_post/create_post_widget.dart';
+import '../components/post_preview_card_copy_widget.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
 import '../flutter_flow/flutter_flow_util.dart';
-import '../settings/settings_widget.dart';
+import '../flutter_flow/flutter_flow_widgets.dart';
+import '../custom_code/actions/index.dart' as actions;
+import '../flutter_flow/custom_functions.dart' as functions;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class ProfileWidget extends StatefulWidget {
-  const ProfileWidget({Key key}) : super(key: key);
+class ProfileShowOtherWidget extends StatefulWidget {
+  const ProfileShowOtherWidget({
+    Key key,
+    this.ownerRef,
+  }) : super(key: key);
+
+  final DocumentReference ownerRef;
 
   @override
-  _ProfileWidgetState createState() => _ProfileWidgetState();
+  _ProfileShowOtherWidgetState createState() => _ProfileShowOtherWidgetState();
 }
 
-class _ProfileWidgetState extends State<ProfileWidget> {
-  UserPostsRecord newPost;
+class _ProfileShowOtherWidgetState extends State<ProfileShowOtherWidget> {
+  FollowersRecord followingRecord;
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<UsersRecord>(
-      stream: UsersRecord.getDocument(currentUserReference),
+      stream: UsersRecord.getDocument(widget.ownerRef),
       builder: (context, snapshot) {
         // Customize what your widget looks like when it's loading.
         if (!snapshot.hasData) {
@@ -39,7 +45,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
             ),
           );
         }
-        final profileUsersRecord = snapshot.data;
+        final profileShowOtherUsersRecord = snapshot.data;
         return Scaffold(
           key: scaffoldKey,
           body: Stack(
@@ -68,25 +74,25 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                         child: Row(
                           mainAxisSize: MainAxisSize.max,
                           children: [
-                            Expanded(
-                              child: Text(
-                                'Profile',
-                                style: FlutterFlowTheme.of(context).title1,
-                              ),
-                            ),
                             InkWell(
                               onTap: () async {
-                                await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => SettingsWidget(),
-                                  ),
-                                );
+                                Navigator.pop(context);
                               },
                               child: Icon(
-                                Icons.keyboard_control_rounded,
-                                color: Colors.black,
+                                Icons.arrow_back_ios,
+                                color:
+                                    FlutterFlowTheme.of(context).primaryColor,
                                 size: 24,
+                              ),
+                            ),
+                            Expanded(
+                              child: Padding(
+                                padding:
+                                    EdgeInsetsDirectional.fromSTEB(16, 0, 0, 0),
+                                child: Text(
+                                  'Profile',
+                                  style: FlutterFlowTheme.of(context).title1,
+                                ),
                               ),
                             ),
                           ],
@@ -150,7 +156,8 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                                                 child: CachedNetworkImage(
                                                   imageUrl:
                                                       valueOrDefault<String>(
-                                                    profileUsersRecord.photoUrl,
+                                                    profileShowOtherUsersRecord
+                                                        .photoUrl,
                                                     'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y&s=200',
                                                   ),
                                                   width: 100,
@@ -166,11 +173,15 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                                                   .fromSTEB(20, 0, 0, 0),
                                               child: Column(
                                                 mainAxisSize: MainAxisSize.max,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
                                                 children: [
                                                   Text(
-                                                    profileUsersRecord.userName,
+                                                    profileShowOtherUsersRecord
+                                                        .userName,
                                                     style: FlutterFlowTheme.of(
                                                             context)
                                                         .title3,
@@ -181,7 +192,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                                                             .fromSTEB(
                                                                 0, 4, 0, 0),
                                                     child: Text(
-                                                      profileUsersRecord
+                                                      profileShowOtherUsersRecord
                                                           .position,
                                                       style:
                                                           FlutterFlowTheme.of(
@@ -197,6 +208,155 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                                                               ),
                                                     ),
                                                   ),
+                                                  Stack(
+                                                    children: [
+                                                      if (!(functions.isFollowingByUser(
+                                                              profileShowOtherUsersRecord,
+                                                              currentUserReference)) ??
+                                                          true)
+                                                        Padding(
+                                                          padding:
+                                                              EdgeInsetsDirectional
+                                                                  .fromSTEB(0,
+                                                                      12, 0, 0),
+                                                          child: FFButtonWidget(
+                                                            onPressed:
+                                                                () async {
+                                                              final usersUpdateData =
+                                                                  {
+                                                                'followers':
+                                                                    FieldValue
+                                                                        .arrayUnion([
+                                                                  currentUserReference
+                                                                ]),
+                                                                'followers_count':
+                                                                    FieldValue
+                                                                        .increment(
+                                                                            1),
+                                                              };
+                                                              await widget
+                                                                  .ownerRef
+                                                                  .update(
+                                                                      usersUpdateData);
+
+                                                              final followersCreateData =
+                                                                  createFollowersRecordData(
+                                                                followingRef:
+                                                                    widget
+                                                                        .ownerRef,
+                                                                followerRef:
+                                                                    currentUserReference,
+                                                                createdAt:
+                                                                    getCurrentTimestamp,
+                                                              );
+                                                              var followersRecordReference =
+                                                                  FollowersRecord
+                                                                      .collection
+                                                                      .doc();
+                                                              await followersRecordReference
+                                                                  .set(
+                                                                      followersCreateData);
+                                                              followingRecord =
+                                                                  FollowersRecord
+                                                                      .getDocumentFromData(
+                                                                          followersCreateData,
+                                                                          followersRecordReference);
+
+                                                              setState(() {});
+                                                            },
+                                                            text: 'Follow',
+                                                            options:
+                                                                FFButtonOptions(
+                                                              width: 122,
+                                                              height: 25,
+                                                              color: FlutterFlowTheme
+                                                                      .of(context)
+                                                                  .primaryColor,
+                                                              textStyle:
+                                                                  FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .subtitle2
+                                                                      .override(
+                                                                        fontFamily:
+                                                                            'Lato',
+                                                                        color: Colors
+                                                                            .white,
+                                                                      ),
+                                                              borderSide:
+                                                                  BorderSide(
+                                                                color: Colors
+                                                                    .transparent,
+                                                                width: 1,
+                                                              ),
+                                                              borderRadius: 12,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      if (!(functions.isFollowingByUser(
+                                                              profileShowOtherUsersRecord,
+                                                              currentUserReference)) ??
+                                                          true)
+                                                        Padding(
+                                                          padding:
+                                                              EdgeInsetsDirectional
+                                                                  .fromSTEB(0,
+                                                                      12, 0, 0),
+                                                          child: FFButtonWidget(
+                                                            onPressed:
+                                                                () async {
+                                                              final usersUpdateData =
+                                                                  {
+                                                                'followers':
+                                                                    FieldValue
+                                                                        .arrayRemove([
+                                                                  currentUserReference
+                                                                ]),
+                                                                'followers_count':
+                                                                    FieldValue
+                                                                        .increment(
+                                                                            -1),
+                                                              };
+                                                              await widget
+                                                                  .ownerRef
+                                                                  .update(
+                                                                      usersUpdateData);
+                                                              await actions
+                                                                  .deleteFromFollowers(
+                                                                widget.ownerRef,
+                                                                currentUserReference,
+                                                              );
+                                                            },
+                                                            text: 'Unfollow',
+                                                            options:
+                                                                FFButtonOptions(
+                                                              width: 122,
+                                                              height: 25,
+                                                              color: FlutterFlowTheme
+                                                                      .of(context)
+                                                                  .background,
+                                                              textStyle:
+                                                                  FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .subtitle2
+                                                                      .override(
+                                                                        fontFamily:
+                                                                            'Lato',
+                                                                        color: FlutterFlowTheme.of(context)
+                                                                            .primaryColor,
+                                                                      ),
+                                                              borderSide:
+                                                                  BorderSide(
+                                                                color: FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .primaryColor,
+                                                                width: 1,
+                                                              ),
+                                                              borderRadius: 12,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                    ],
+                                                  ),
                                                 ],
                                               ),
                                             ),
@@ -207,7 +367,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                                         padding: EdgeInsetsDirectional.fromSTEB(
                                             0, 24, 0, 0),
                                         child: Text(
-                                          'About me',
+                                          'About',
                                           style: FlutterFlowTheme.of(context)
                                               .title3
                                               .override(
@@ -224,7 +384,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                                                   0, 8, 0, 54),
                                           child: Text(
                                             valueOrDefault<String>(
-                                              profileUsersRecord.bio,
+                                              profileShowOtherUsersRecord.bio,
                                               'No bio...',
                                             ),
                                             textAlign: TextAlign.start,
@@ -279,7 +439,8 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                                           Text(
                                             valueOrDefault<String>(
                                               formatNumber(
-                                                profileUsersRecord.postsCount,
+                                                profileShowOtherUsersRecord
+                                                    .postsCount,
                                                 formatType: FormatType.compact,
                                               ),
                                               '0',
@@ -346,7 +507,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                                             Text(
                                               valueOrDefault<String>(
                                                 formatNumber(
-                                                  profileUsersRecord
+                                                  profileShowOtherUsersRecord
                                                       .followingCount,
                                                   formatType:
                                                       FormatType.compact,
@@ -421,7 +582,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                                             Text(
                                               valueOrDefault<String>(
                                                 formatNumber(
-                                                  profileUsersRecord
+                                                  profileShowOtherUsersRecord
                                                       .followersCount,
                                                   formatType:
                                                       FormatType.compact,
@@ -464,58 +625,6 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                           ],
                         ),
                       ),
-                      Align(
-                        alignment: AlignmentDirectional(0, 0),
-                        child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(0, 35, 0, 0),
-                          child: Text(
-                            'Earnings ',
-                            textAlign: TextAlign.start,
-                            style: FlutterFlowTheme.of(context).title3.override(
-                                  fontFamily: 'Lato',
-                                  fontSize: 16,
-                                ),
-                          ),
-                        ),
-                      ),
-                      Align(
-                        alignment: AlignmentDirectional(0, 0),
-                        child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(0, 2, 0, 0),
-                          child: Text(
-                            valueOrDefault<String>(
-                              formatNumber(
-                                profileUsersRecord.earnings,
-                                formatType: FormatType.decimal,
-                                decimalType: DecimalType.periodDecimal,
-                                currency: '\$',
-                              ),
-                              '0',
-                            ),
-                            style: FlutterFlowTheme.of(context).title1.override(
-                                  fontFamily: 'Lato',
-                                  fontSize: 36,
-                                ),
-                          ),
-                        ),
-                      ),
-                      Align(
-                        alignment: AlignmentDirectional(0, 0),
-                        child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(0, 16, 0, 0),
-                          child: Text(
-                            'How it works?',
-                            style: FlutterFlowTheme.of(context)
-                                .bodyText1
-                                .override(
-                                  fontFamily: 'Lato',
-                                  color:
-                                      FlutterFlowTheme.of(context).primaryColor,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                          ),
-                        ),
-                      ),
                       Padding(
                         padding: EdgeInsetsDirectional.fromSTEB(0, 35, 0, 0),
                         child: Container(
@@ -553,48 +662,9 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                                       padding: EdgeInsetsDirectional.fromSTEB(
                                           0, 0, 0, 24),
                                       child: Text(
-                                        'My Posts',
+                                        'Posts',
                                         style:
                                             FlutterFlowTheme.of(context).title2,
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          8, 0, 0, 0),
-                                      child: InkWell(
-                                        onTap: () async {
-                                          final userPostsCreateData =
-                                              createUserPostsRecordData(
-                                            isDraft: true,
-                                            postUser:
-                                                profileUsersRecord.reference,
-                                          );
-                                          var userPostsRecordReference =
-                                              UserPostsRecord.collection.doc();
-                                          await userPostsRecordReference
-                                              .set(userPostsCreateData);
-                                          newPost = UserPostsRecord
-                                              .getDocumentFromData(
-                                                  userPostsCreateData,
-                                                  userPostsRecordReference);
-                                          await Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  CreatePostWidget(
-                                                postRef: newPost.reference,
-                                              ),
-                                            ),
-                                          );
-
-                                          setState(() {});
-                                        },
-                                        child: Icon(
-                                          Icons.add_outlined,
-                                          color: FlutterFlowTheme.of(context)
-                                              .primaryColor,
-                                          size: 32,
-                                        ),
                                       ),
                                     ),
                                   ],
@@ -604,8 +674,9 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                                     queryBuilder: (userPostsRecord) =>
                                         userPostsRecord
                                             .where('postUser',
-                                                isEqualTo: profileUsersRecord
-                                                    .reference)
+                                                isEqualTo:
+                                                    profileShowOtherUsersRecord
+                                                        .reference)
                                             .orderBy('timePosted',
                                                 descending: true),
                                   ),
@@ -648,7 +719,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                                           padding:
                                               EdgeInsetsDirectional.fromSTEB(
                                                   0, 0, 0, 16),
-                                          child: PostPreviewCardWidget(
+                                          child: PostPreviewCardCopyWidget(
                                             post: columnUserPostsRecord,
                                           ),
                                         );

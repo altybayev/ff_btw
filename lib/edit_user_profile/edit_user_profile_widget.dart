@@ -376,7 +376,8 @@ class _EditUserProfileWidgetState extends State<EditUserProfileWidget> {
                                                 fontSize: 16,
                                               ),
                                           textAlign: TextAlign.start,
-                                          maxLines: 1,
+                                          maxLines: 4,
+                                          keyboardType: TextInputType.multiline,
                                         ),
                                       ),
                                     ],
@@ -393,15 +394,32 @@ class _EditUserProfileWidgetState extends State<EditUserProfileWidget> {
                                     EdgeInsetsDirectional.fromSTEB(0, 30, 0, 0),
                                 child: FFButtonWidget(
                                   onPressed: () async {
-                                    final usersUpdateData =
-                                        createUsersRecordData(
-                                      userName: fullnameController?.text ?? '',
-                                      position: positionController?.text ?? '',
-                                      bio: bioController?.text ?? '',
-                                      photoUrl: uploadedFileUrl,
-                                    );
-                                    await editUserProfileUsersRecord.reference
-                                        .update(usersUpdateData);
+                                    if (uploadedFileUrl != null &&
+                                        uploadedFileUrl != '') {
+                                      final usersUpdateData =
+                                          createUsersRecordData(
+                                        userName:
+                                            fullnameController?.text ?? '',
+                                        position:
+                                            positionController?.text ?? '',
+                                        bio: bioController?.text ?? '',
+                                        photoUrl: uploadedFileUrl,
+                                      );
+                                      await editUserProfileUsersRecord.reference
+                                          .update(usersUpdateData);
+                                    } else {
+                                      final usersUpdateData =
+                                          createUsersRecordData(
+                                        userName:
+                                            fullnameController?.text ?? '',
+                                        position:
+                                            positionController?.text ?? '',
+                                        bio: bioController?.text ?? '',
+                                      );
+                                      await editUserProfileUsersRecord.reference
+                                          .update(usersUpdateData);
+                                    }
+
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
                                         content: Text(
@@ -414,9 +432,7 @@ class _EditUserProfileWidgetState extends State<EditUserProfileWidget> {
                                               ),
                                         ),
                                         duration: Duration(milliseconds: 4000),
-                                        backgroundColor:
-                                            FlutterFlowTheme.of(context)
-                                                .secondaryBackground,
+                                        backgroundColor: Colors.black,
                                       ),
                                     );
                                   },

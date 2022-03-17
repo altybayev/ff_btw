@@ -12,6 +12,7 @@ import 'chat_messages_record.dart';
 import 'categories_record.dart';
 import 'blocks_record.dart';
 import 'tags_record.dart';
+import 'followers_record.dart';
 
 import 'index.dart';
 
@@ -34,6 +35,7 @@ const kDocumentReferenceField = 'Document__Reference__Field';
   CategoriesRecord,
   BlocksRecord,
   TagsRecord,
+  FollowersRecord,
 ])
 final Serializers serializers = (_$serializers.toBuilder()
       ..add(DocumentReferenceSerializer())

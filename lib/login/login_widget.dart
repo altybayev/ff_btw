@@ -2,6 +2,7 @@ import '../auth/auth_util.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
 import '../flutter_flow/flutter_flow_util.dart';
 import '../flutter_flow/flutter_flow_widgets.dart';
+import '../forgot_password/forgot_password_widget.dart';
 import '../main.dart';
 import '../register/register_widget.dart';
 import 'package:flutter/material.dart';
@@ -299,14 +300,25 @@ class _LoginWidgetState extends State<LoginWidget> {
                               Padding(
                                 padding:
                                     EdgeInsetsDirectional.fromSTEB(8, 0, 0, 0),
-                                child: Text(
-                                  'Reset here',
-                                  style: FlutterFlowTheme.of(context)
-                                      .bodyText1
-                                      .override(
-                                        fontFamily: 'Lato',
-                                        color: Color(0xFF2151CD),
+                                child: InkWell(
+                                  onTap: () async {
+                                    await Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            ForgotPasswordWidget(),
                                       ),
+                                    );
+                                  },
+                                  child: Text(
+                                    'Reset here',
+                                    style: FlutterFlowTheme.of(context)
+                                        .bodyText1
+                                        .override(
+                                          fontFamily: 'Lato',
+                                          color: Color(0xFF2151CD),
+                                        ),
+                                  ),
                                 ),
                               ),
                             ],

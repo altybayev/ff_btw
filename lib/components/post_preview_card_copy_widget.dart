@@ -1,6 +1,5 @@
 import '../backend/backend.dart';
 import '../category_details/category_details_widget.dart';
-import '../components/delete_post_widget.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
 import '../flutter_flow/flutter_flow_util.dart';
 import '../post_details/post_details_widget.dart';
@@ -9,8 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class PostPreviewCardWidget extends StatefulWidget {
-  const PostPreviewCardWidget({
+class PostPreviewCardCopyWidget extends StatefulWidget {
+  const PostPreviewCardCopyWidget({
     Key key,
     this.post,
   }) : super(key: key);
@@ -18,10 +17,11 @@ class PostPreviewCardWidget extends StatefulWidget {
   final UserPostsRecord post;
 
   @override
-  _PostPreviewCardWidgetState createState() => _PostPreviewCardWidgetState();
+  _PostPreviewCardCopyWidgetState createState() =>
+      _PostPreviewCardCopyWidgetState();
 }
 
-class _PostPreviewCardWidgetState extends State<PostPreviewCardWidget> {
+class _PostPreviewCardCopyWidgetState extends State<PostPreviewCardCopyWidget> {
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -97,28 +97,6 @@ class _PostPreviewCardWidgetState extends State<PostPreviewCardWidget> {
                                   fontWeight: FontWeight.bold,
                                 ),
                           ),
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () async {
-                          await showModalBottomSheet(
-                            isScrollControlled: true,
-                            backgroundColor: Colors.white,
-                            context: context,
-                            builder: (context) {
-                              return Padding(
-                                padding: MediaQuery.of(context).viewInsets,
-                                child: DeletePostWidget(
-                                  postRef: widget.post.reference,
-                                ),
-                              );
-                            },
-                          );
-                        },
-                        child: Icon(
-                          Icons.keyboard_control_rounded,
-                          color: Colors.black,
-                          size: 24,
                         ),
                       ),
                     ],

@@ -57,7 +57,6 @@ class _BsAddImageWidgetState extends State<BsAddImageWidget> {
                 padding: EdgeInsetsDirectional.fromSTEB(0, 16, 0, 0),
                 child: InkWell(
                   onTap: () async {
-                    setState(() => FFAppState().imageUploading = true);
                     final selectedMedia =
                         await selectMediaWithSourceBottomSheet(
                       context: context,
@@ -90,6 +89,10 @@ class _BsAddImageWidgetState extends State<BsAddImageWidget> {
                         );
                         return;
                       }
+                    }
+
+                    if (uploadedFileUrl != null && uploadedFileUrl != '') {
+                      setState(() => FFAppState().imageUploading = true);
                     }
                   },
                   child: Container(
@@ -154,6 +157,7 @@ class _BsAddImageWidgetState extends State<BsAddImageWidget> {
                   imageUrl: uploadedFileUrl,
                 );
                 await BlocksRecord.collection.doc().set(blocksCreateData);
+                setState(() => FFAppState().imageUploading = false);
                 Navigator.pop(context);
               },
               text: 'ADD',

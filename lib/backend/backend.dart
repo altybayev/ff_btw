@@ -16,6 +16,7 @@ import 'schema/chat_messages_record.dart';
 import 'schema/categories_record.dart';
 import 'schema/blocks_record.dart';
 import 'schema/tags_record.dart';
+import 'schema/followers_record.dart';
 import 'schema/serializers.dart';
 
 export 'package:cloud_firestore/cloud_firestore.dart';
@@ -34,6 +35,7 @@ export 'schema/chat_messages_record.dart';
 export 'schema/categories_record.dart';
 export 'schema/blocks_record.dart';
 export 'schema/tags_record.dart';
+export 'schema/followers_record.dart';
 
 /// Functions to query UserPostsRecords (as a Stream and as a Future).
 Stream<List<UserPostsRecord>> queryUserPostsRecord(
@@ -221,6 +223,21 @@ Future<List<TagsRecord>> queryTagsRecordOnce(
         int limit = -1,
         bool singleRecord = false}) =>
     queryCollectionOnce(TagsRecord.collection, TagsRecord.serializer,
+        queryBuilder: queryBuilder, limit: limit, singleRecord: singleRecord);
+
+/// Functions to query FollowersRecords (as a Stream and as a Future).
+Stream<List<FollowersRecord>> queryFollowersRecord(
+        {Query Function(Query) queryBuilder,
+        int limit = -1,
+        bool singleRecord = false}) =>
+    queryCollection(FollowersRecord.collection, FollowersRecord.serializer,
+        queryBuilder: queryBuilder, limit: limit, singleRecord: singleRecord);
+
+Future<List<FollowersRecord>> queryFollowersRecordOnce(
+        {Query Function(Query) queryBuilder,
+        int limit = -1,
+        bool singleRecord = false}) =>
+    queryCollectionOnce(FollowersRecord.collection, FollowersRecord.serializer,
         queryBuilder: queryBuilder, limit: limit, singleRecord: singleRecord);
 
 Stream<List<T>> queryCollection<T>(

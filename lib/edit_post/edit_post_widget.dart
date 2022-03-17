@@ -23,8 +23,8 @@ import 'package:flutter/scheduler.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class CreatePostWidget extends StatefulWidget {
-  const CreatePostWidget({
+class EditPostWidget extends StatefulWidget {
+  const EditPostWidget({
     Key key,
     this.postRef,
   }) : super(key: key);
@@ -32,10 +32,10 @@ class CreatePostWidget extends StatefulWidget {
   final DocumentReference postRef;
 
   @override
-  _CreatePostWidgetState createState() => _CreatePostWidgetState();
+  _EditPostWidgetState createState() => _EditPostWidgetState();
 }
 
-class _CreatePostWidgetState extends State<CreatePostWidget> {
+class _EditPostWidgetState extends State<EditPostWidget> {
   String uploadedFileUrl = '';
   TextEditingController postTitleController;
   final formKey = GlobalKey<FormState>();
@@ -48,8 +48,6 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
     SchedulerBinding.instance.addPostFrameCallback((_) async {
       setState(() => FFAppState().tagsCount = 0);
     });
-
-    postTitleController = TextEditingController();
   }
 
   @override
@@ -59,10 +57,20 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         automaticallyImplyLeading: false,
+        leading: InkWell(
+          onTap: () async {
+            Navigator.pop(context);
+          },
+          child: Icon(
+            Icons.arrow_back_ios_outlined,
+            color: FlutterFlowTheme.of(context).primaryColor,
+            size: 24,
+          ),
+        ),
         title: Padding(
           padding: EdgeInsetsDirectional.fromSTEB(24, 0, 0, 0),
           child: Text(
-            'Create Post',
+            'Edit Post',
             style: FlutterFlowTheme.of(context).title2.override(
                   fontFamily: 'Lexend Deca',
                   color: Color(0xFF090F13),
@@ -78,8 +86,8 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
               borderColor: Colors.transparent,
               borderRadius: 30,
               buttonSize: 48,
-              icon: Icon(
-                Icons.close_rounded,
+              icon: FaIcon(
+                FontAwesomeIcons.trashAlt,
                 color: FlutterFlowTheme.of(context).primaryDark,
                 size: 30,
               ),
@@ -88,9 +96,8 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                       context: context,
                       builder: (alertDialogContext) {
                         return AlertDialog(
-                          title: Text('Are you sure?'),
-                          content:
-                              Text('If you exit all post data will be lost'),
+                          title: Text('Delete'),
+                          content: Text('Do you want to delete the post?'),
                           actions: [
                             TextButton(
                               onPressed: () =>
@@ -100,7 +107,7 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                             TextButton(
                               onPressed: () =>
                                   Navigator.pop(alertDialogContext, true),
-                              child: Text('Discard'),
+                              child: Text('Ok'),
                             ),
                           ],
                         );
@@ -109,6 +116,11 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                     false;
                 if (confirmDialogResponse) {
                   await widget.postRef.delete();
+
+                  final usersUpdateData = {
+                    'posts_count': FieldValue.increment(-1),
+                  };
+                  await currentUserReference.update(usersUpdateData);
                   Navigator.pop(context);
                 }
               },
@@ -172,7 +184,11 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                                               EdgeInsetsDirectional.fromSTEB(
                                                   0, 16, 0, 0),
                                           child: TextFormField(
-                                            controller: postTitleController,
+                                            controller: postTitleController ??=
+                                                TextEditingController(
+                                              text: stackUserPostsRecord
+                                                  .postTitle,
+                                            ),
                                             obscureText: false,
                                             decoration: InputDecoration(
                                               labelText: 'Post Title',
@@ -486,62 +502,56 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                                           padding:
                                               EdgeInsetsDirectional.fromSTEB(
                                                   0, 16, 0, 0),
-                                          child: Container(
-                                            height: 220,
-                                            child: Stack(
-                                              children: [
-                                                InkWell(
-                                                  onTap: () async {
-                                                    final selectedMedia =
-                                                        await selectMediaWithSourceBottomSheet(
-                                                      context: context,
-                                                      allowPhoto: true,
-                                                      backgroundColor:
-                                                          Colors.white,
-                                                      textColor:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .primaryDark,
-                                                      pickerFontFamily:
-                                                          'Lexend Deca',
-                                                    );
-                                                    if (selectedMedia != null &&
-                                                        validateFileFormat(
-                                                            selectedMedia
-                                                                .storagePath,
-                                                            context)) {
-                                                      showUploadMessage(
-                                                        context,
-                                                        'Uploading file...',
-                                                        showLoading: true,
-                                                      );
-                                                      final downloadUrl =
-                                                          await uploadData(
-                                                              selectedMedia
-                                                                  .storagePath,
-                                                              selectedMedia
-                                                                  .bytes);
-                                                      ScaffoldMessenger.of(
-                                                              context)
-                                                          .hideCurrentSnackBar();
-                                                      if (downloadUrl != null) {
-                                                        setState(() =>
-                                                            uploadedFileUrl =
-                                                                downloadUrl);
-                                                        showUploadMessage(
-                                                          context,
-                                                          'Success!',
-                                                        );
-                                                      } else {
-                                                        showUploadMessage(
-                                                          context,
-                                                          'Failed to upload media',
-                                                        );
-                                                        return;
-                                                      }
-                                                    }
-                                                  },
-                                                  child: Container(
+                                          child: InkWell(
+                                            onTap: () async {
+                                              final selectedMedia =
+                                                  await selectMediaWithSourceBottomSheet(
+                                                context: context,
+                                                allowPhoto: true,
+                                                backgroundColor: Colors.white,
+                                                textColor:
+                                                    FlutterFlowTheme.of(context)
+                                                        .primaryDark,
+                                                pickerFontFamily: 'Lato',
+                                              );
+                                              if (selectedMedia != null &&
+                                                  validateFileFormat(
+                                                      selectedMedia.storagePath,
+                                                      context)) {
+                                                showUploadMessage(
+                                                  context,
+                                                  'Uploading file...',
+                                                  showLoading: true,
+                                                );
+                                                final downloadUrl =
+                                                    await uploadData(
+                                                        selectedMedia
+                                                            .storagePath,
+                                                        selectedMedia.bytes);
+                                                ScaffoldMessenger.of(context)
+                                                    .hideCurrentSnackBar();
+                                                if (downloadUrl != null) {
+                                                  setState(() =>
+                                                      uploadedFileUrl =
+                                                          downloadUrl);
+                                                  showUploadMessage(
+                                                    context,
+                                                    'Success!',
+                                                  );
+                                                } else {
+                                                  showUploadMessage(
+                                                    context,
+                                                    'Failed to upload media',
+                                                  );
+                                                  return;
+                                                }
+                                              }
+                                            },
+                                            child: Container(
+                                              height: 220,
+                                              child: Stack(
+                                                children: [
+                                                  Container(
                                                     width:
                                                         MediaQuery.of(context)
                                                             .size
@@ -580,50 +590,70 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                                                       ),
                                                     ),
                                                   ),
-                                                ),
-                                                if (functions.hasUploadedMedia(
-                                                        uploadedFileUrl) ??
-                                                    true)
-                                                  Align(
-                                                    alignment:
-                                                        AlignmentDirectional(
-                                                            0, 0),
-                                                    child:
-                                                        FlutterFlowMediaDisplay(
-                                                      path: uploadedFileUrl,
-                                                      imageBuilder: (path) =>
-                                                          ClipRRect(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(12),
-                                                        child: Image.network(
-                                                          path,
+                                                  if (stackUserPostsRecord
+                                                              .postPhoto !=
+                                                          null &&
+                                                      stackUserPostsRecord
+                                                              .postPhoto !=
+                                                          '')
+                                                    ClipRRect(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              12),
+                                                      child: Image.network(
+                                                        stackUserPostsRecord
+                                                            .postPhoto,
+                                                        width: double.infinity,
+                                                        height: 220,
+                                                        fit: BoxFit.cover,
+                                                      ),
+                                                    ),
+                                                  if (functions.hasUploadedMedia(
+                                                          uploadedFileUrl) ??
+                                                      true)
+                                                    Align(
+                                                      alignment:
+                                                          AlignmentDirectional(
+                                                              0, 0),
+                                                      child:
+                                                          FlutterFlowMediaDisplay(
+                                                        path: uploadedFileUrl,
+                                                        imageBuilder: (path) =>
+                                                            ClipRRect(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(12),
+                                                          child: Image.network(
+                                                            path,
+                                                            width:
+                                                                MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width,
+                                                            height:
+                                                                double.infinity,
+                                                            fit: BoxFit.cover,
+                                                          ),
+                                                        ),
+                                                        videoPlayerBuilder:
+                                                            (path) =>
+                                                                FlutterFlowVideoPlayer(
+                                                          path: path,
                                                           width: MediaQuery.of(
                                                                   context)
                                                               .size
                                                               .width,
-                                                          height:
-                                                              double.infinity,
-                                                          fit: BoxFit.cover,
+                                                          autoPlay: false,
+                                                          looping: true,
+                                                          showControls: true,
+                                                          allowFullScreen: true,
+                                                          allowPlaybackSpeedMenu:
+                                                              false,
                                                         ),
                                                       ),
-                                                      videoPlayerBuilder: (path) =>
-                                                          FlutterFlowVideoPlayer(
-                                                        path: path,
-                                                        width: MediaQuery.of(
-                                                                context)
-                                                            .size
-                                                            .width,
-                                                        autoPlay: false,
-                                                        looping: true,
-                                                        showControls: true,
-                                                        allowFullScreen: true,
-                                                        allowPlaybackSpeedMenu:
-                                                            false,
-                                                      ),
                                                     ),
-                                                  ),
-                                              ],
+                                                ],
+                                              ),
                                             ),
                                           ),
                                         ),
@@ -706,20 +736,28 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                         padding: EdgeInsetsDirectional.fromSTEB(40, 20, 40, 20),
                         child: FFButtonWidget(
                           onPressed: () async {
-                            final userPostsUpdateData =
-                                createUserPostsRecordData(
-                              postPhoto: uploadedFileUrl,
-                              postTitle: postTitleController.text,
-                              postUser: currentUserReference,
-                              timePosted: getCurrentTimestamp,
-                              isDraft: true,
-                            );
-                            await widget.postRef.update(userPostsUpdateData);
+                            if (uploadedFileUrl != null &&
+                                uploadedFileUrl != '') {
+                              final userPostsUpdateData =
+                                  createUserPostsRecordData(
+                                postPhoto: uploadedFileUrl,
+                                postTitle: postTitleController?.text ?? '',
+                                postUser: currentUserReference,
+                                timePosted: getCurrentTimestamp,
+                                isDraft: true,
+                              );
+                              await widget.postRef.update(userPostsUpdateData);
+                            } else {
+                              final userPostsUpdateData =
+                                  createUserPostsRecordData(
+                                postTitle: postTitleController?.text ?? '',
+                                postUser: currentUserReference,
+                                timePosted: getCurrentTimestamp,
+                                isDraft: true,
+                              );
+                              await widget.postRef.update(userPostsUpdateData);
+                            }
 
-                            final usersUpdateData = {
-                              'posts_count': FieldValue.increment(1),
-                            };
-                            await currentUserReference.update(usersUpdateData);
                             await Navigator.pushAndRemoveUntil(
                               context,
                               PageTransition(
@@ -731,7 +769,7 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                               (r) => false,
                             );
                           },
-                          text: 'CREATE',
+                          text: 'UPDATE',
                           options: FFButtonOptions(
                             width: 270,
                             height: 50,

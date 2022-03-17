@@ -525,7 +525,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                           if (!(socialFeedUserPostsRecord
                                                                   .likes
                                                                   .toList()
-                                                                  .contains(
+                                                                  ?.contains(
                                                                       currentUserReference)) ??
                                                               true)
                                                             Align(
@@ -567,7 +567,7 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                                           if (socialFeedUserPostsRecord
                                                                   .likes
                                                                   .toList()
-                                                                  .contains(
+                                                                  ?.contains(
                                                                       currentUserReference) ??
                                                               true)
                                                             Align(

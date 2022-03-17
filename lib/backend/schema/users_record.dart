@@ -59,6 +59,12 @@ abstract class UsersRecord implements Built<UsersRecord, UsersRecordBuilder> {
   int get postsCount;
 
   @nullable
+  BuiltList<DocumentReference> get followers;
+
+  @nullable
+  BuiltList<DocumentReference> get following;
+
+  @nullable
   @BuiltValueField(wireName: kDocumentReferenceField)
   DocumentReference get reference;
 
@@ -75,7 +81,9 @@ abstract class UsersRecord implements Built<UsersRecord, UsersRecordBuilder> {
     ..position = ''
     ..followersCount = 0
     ..followingCount = 0
-    ..postsCount = 0;
+    ..postsCount = 0
+    ..followers = ListBuilder()
+    ..following = ListBuilder();
 
   static CollectionReference get collection =>
       FirebaseFirestore.instance.collection('users');
@@ -130,4 +138,6 @@ Map<String, dynamic> createUsersRecordData({
           ..position = position
           ..followersCount = followersCount
           ..followingCount = followingCount
-          ..postsCount = postsCount));
+          ..postsCount = postsCount
+          ..followers = null
+          ..following = null));

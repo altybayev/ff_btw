@@ -22,7 +22,7 @@ class _CategoryCardWidgetState extends State<CategoryCardWidget> {
   Widget build(BuildContext context) {
     return Container(
       width: 244,
-      height: 244,
+      height: 60,
       decoration: BoxDecoration(
         boxShadow: [
           BoxShadow(
@@ -35,6 +35,7 @@ class _CategoryCardWidgetState extends State<CategoryCardWidget> {
         shape: BoxShape.rectangle,
       ),
       child: Stack(
+        alignment: AlignmentDirectional(0, 0),
         children: [
           Hero(
             tag: widget.category.imageUrl,
@@ -50,11 +51,12 @@ class _CategoryCardWidgetState extends State<CategoryCardWidget> {
             ),
           ),
           Align(
-            alignment: AlignmentDirectional(-1, 1),
+            alignment: AlignmentDirectional(0, 0),
             child: Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(16, 0, 16, 16),
+              padding: EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
               child: Text(
                 widget.category.name,
+                textAlign: TextAlign.center,
                 style: FlutterFlowTheme.of(context).title3.override(
                       fontFamily: 'Lato',
                       color: Colors.white,

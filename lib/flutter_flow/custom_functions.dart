@@ -16,3 +16,24 @@ int likes(UserPostsRecord post) {
 bool hasUploadedMedia(String mediaPath) {
   return mediaPath != null && mediaPath.isNotEmpty;
 }
+
+bool isLikedByUser(
+  UserPostsRecord post,
+  DocumentReference userRef,
+) {
+  return post.likes.contains(userRef);
+}
+
+bool isFollowedByUser(
+  UsersRecord user,
+  DocumentReference targetRef,
+) {
+  return user.followers.contains(targetRef);
+}
+
+bool isFollowingByUser(
+  UsersRecord user,
+  DocumentReference targetRef,
+) {
+  return user.following.contains(targetRef);
+}

@@ -1,18 +1,20 @@
+import '../auth/auth_util.dart';
 import '../backend/backend.dart';
+import '../edit_post/edit_post_widget.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
 import '../flutter_flow/flutter_flow_util.dart';
 import '../flutter_flow/flutter_flow_widgets.dart';
-import '../home_page/home_page_widget.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class DeletePostWidget extends StatefulWidget {
   const DeletePostWidget({
     Key key,
-    this.postParameters,
+    this.postRef,
   }) : super(key: key);
 
-  final UserPostsRecord postParameters;
+  final DocumentReference postRef;
 
   @override
   _DeletePostWidgetState createState() => _DeletePostWidgetState();
@@ -21,71 +23,123 @@ class DeletePostWidget extends StatefulWidget {
 class _DeletePostWidgetState extends State<DeletePostWidget> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      height: double.infinity,
-      decoration: BoxDecoration(
-        color: FlutterFlowTheme.of(context).primaryDark,
-      ),
-      child: Padding(
-        padding: EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20),
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            FFButtonWidget(
+    return Padding(
+      padding: EdgeInsetsDirectional.fromSTEB(40, 20, 40, 20),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Settings',
+                style: FlutterFlowTheme.of(context).title2,
+              ),
+              InkWell(
+                onTap: () async {
+                  Navigator.pop(context);
+                },
+                child: Icon(
+                  Icons.close_rounded,
+                  color: FlutterFlowTheme.of(context).primaryDark,
+                  size: 32,
+                ),
+              ),
+            ],
+          ),
+          Padding(
+            padding: EdgeInsetsDirectional.fromSTEB(0, 16, 0, 0),
+            child: FFButtonWidget(
               onPressed: () async {
-                await widget.postParameters.reference.delete();
+                Navigator.pop(context);
                 await Navigator.push(
                   context,
                   PageTransition(
-                    type: PageTransitionType.leftToRight,
-                    duration: Duration(milliseconds: 220),
-                    reverseDuration: Duration(milliseconds: 220),
-                    child: HomePageWidget(),
+                    type: PageTransitionType.rightToLeft,
+                    duration: Duration(milliseconds: 300),
+                    reverseDuration: Duration(milliseconds: 300),
+                    child: EditPostWidget(
+                      postRef: widget.postRef,
+                    ),
                   ),
                 );
               },
-              text: 'Delete Post',
+              text: 'EDIT',
               options: FFButtonOptions(
                 width: double.infinity,
                 height: 60,
-                color: Color(0xFFE06666),
-                textStyle: FlutterFlowTheme.of(context).subtitle2.override(
+                color: FlutterFlowTheme.of(context).primaryColor,
+                textStyle: FlutterFlowTheme.of(context).title3.override(
                       fontFamily: 'Lato',
                       color: Colors.white,
+                      fontSize: 16,
                     ),
+                elevation: 1,
                 borderSide: BorderSide(
                   color: Colors.transparent,
                   width: 1,
                 ),
-                borderRadius: 40,
+                borderRadius: 12,
               ),
             ),
-            Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(0, 16, 0, 0),
-              child: FFButtonWidget(
-                onPressed: () async {
+          ),
+          Padding(
+            padding: EdgeInsetsDirectional.fromSTEB(0, 16, 0, 0),
+            child: FFButtonWidget(
+              onPressed: () async {
+                var confirmDialogResponse = await showDialog<bool>(
+                      context: context,
+                      builder: (alertDialogContext) {
+                        return AlertDialog(
+                          title: Text('Delete'),
+                          content: Text('Do you want to delete this post?'),
+                          actions: [
+                            TextButton(
+                              onPressed: () =>
+                                  Navigator.pop(alertDialogContext, false),
+                              child: Text('Cancel'),
+                            ),
+                            TextButton(
+                              onPressed: () =>
+                                  Navigator.pop(alertDialogContext, true),
+                              child: Text('Ok'),
+                            ),
+                          ],
+                        );
+                      },
+                    ) ??
+                    false;
+                if (confirmDialogResponse) {
+                  await widget.postRef.delete();
+
+                  final usersUpdateData = {
+                    'posts_count': FieldValue.increment(-1),
+                  };
+                  await currentUserReference.update(usersUpdateData);
                   Navigator.pop(context);
-                },
-                text: 'Cancel',
-                options: FFButtonOptions(
-                  width: double.infinity,
-                  height: 60,
-                  color: FlutterFlowTheme.of(context).red200,
-                  textStyle: FlutterFlowTheme.of(context).subtitle2.override(
-                        fontFamily: 'Lato',
-                        color: Colors.white,
-                      ),
-                  borderSide: BorderSide(
-                    color: Colors.transparent,
-                    width: 1,
-                  ),
-                  borderRadius: 40,
+                }
+              },
+              text: 'DELETE',
+              options: FFButtonOptions(
+                width: double.infinity,
+                height: 60,
+                color: FlutterFlowTheme.of(context).background,
+                textStyle: FlutterFlowTheme.of(context).title3.override(
+                      fontFamily: 'Lato',
+                      color: FlutterFlowTheme.of(context).primaryDark,
+                      fontSize: 16,
+                    ),
+                elevation: 1,
+                borderSide: BorderSide(
+                  color: Colors.transparent,
+                  width: 1,
                 ),
+                borderRadius: 12,
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
