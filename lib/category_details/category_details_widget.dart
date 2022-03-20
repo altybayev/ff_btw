@@ -125,8 +125,7 @@ class _CategoryDetailsWidgetState extends State<CategoryDetailsWidget> {
                         stream: queryUserPostsRecord(
                           queryBuilder: (userPostsRecord) => userPostsRecord
                               .where('category', isEqualTo: widget.categoryRef)
-                              .where('numLikes', isGreaterThanOrEqualTo: 2)
-                              .where('numViews', isGreaterThanOrEqualTo: 10)
+                              .where('numLikes', isGreaterThanOrEqualTo: 3)
                               .orderBy('timePosted', descending: true),
                         ),
                         builder: (context, snapshot) {

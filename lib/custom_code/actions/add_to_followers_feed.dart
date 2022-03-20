@@ -41,7 +41,7 @@ Future addToFollowersFeed(
           'postRef': postRef,
           'userRef': followerRef,
           'rank': level,
-          'createdAt': FieldValue.serverTimestamp
+          'createdAt': FieldValue.serverTimestamp()
         };
 
         var newFeed = FirebaseFirestore.instance.collection('feeds').doc();

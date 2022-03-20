@@ -216,6 +216,7 @@ class _ExploreWidgetState extends State<ExploreWidget> {
                   child: StreamBuilder<List<UserPostsRecord>>(
                     stream: queryUserPostsRecord(
                       queryBuilder: (userPostsRecord) => userPostsRecord
+                          .where('numLikes', isGreaterThanOrEqualTo: 3)
                           .orderBy('timePosted', descending: true),
                     ),
                     builder: (context, snapshot) {
