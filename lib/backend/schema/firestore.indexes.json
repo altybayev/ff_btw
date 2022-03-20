@@ -133,10 +133,6 @@
           "order": "ASCENDING"
         },
         {
-          "fieldPath": "numViews",
-          "order": "ASCENDING"
-        },
-        {
           "fieldPath": "timePosted",
           "order": "DESCENDING"
         }
@@ -166,6 +162,20 @@
         },
         {
           "fieldPath": "createdAt",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "userPosts",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "numLikes",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "timePosted",
           "order": "DESCENDING"
         }
       ]

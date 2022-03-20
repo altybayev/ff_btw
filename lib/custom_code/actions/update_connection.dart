@@ -23,7 +23,7 @@ Future updateConnection(
     // connection is already have
     final updateData = {
       'numLevel': FieldValue.increment(numLevel),
-      'updatedAt': FieldValue.serverTimestamp
+      'updatedAt': FieldValue.serverTimestamp()
     };
 
     // update connection
@@ -37,7 +37,7 @@ Future updateConnection(
     'aRef': aRef,
     'bRef': bRef,
     'numLevel': 100, // for first touch!
-    'createdAt': FieldValue.serverTimestamp
+    'createdAt': FieldValue.serverTimestamp()
   };
 
   var connectionReference =
