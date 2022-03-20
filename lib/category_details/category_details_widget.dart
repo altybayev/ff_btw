@@ -1,10 +1,12 @@
 import '../backend/backend.dart';
+import '../components/no_data_widget.dart';
 import '../components/post_preview_card_copy_widget.dart';
 import '../flutter_flow/flutter_flow_icon_button.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
 import '../flutter_flow/flutter_flow_util.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -48,10 +50,11 @@ class _CategoryDetailsWidgetState extends State<CategoryDetailsWidget> {
               if (!snapshot.hasData) {
                 return Center(
                   child: SizedBox(
-                    width: 50,
-                    height: 50,
-                    child: CircularProgressIndicator(
+                    width: 20,
+                    height: 20,
+                    child: SpinKitRipple(
                       color: FlutterFlowTheme.of(context).primaryColor,
+                      size: 20,
                     ),
                   ),
                 );
@@ -122,6 +125,8 @@ class _CategoryDetailsWidgetState extends State<CategoryDetailsWidget> {
                         stream: queryUserPostsRecord(
                           queryBuilder: (userPostsRecord) => userPostsRecord
                               .where('category', isEqualTo: widget.categoryRef)
+                              .where('numLikes', isGreaterThanOrEqualTo: 2)
+                              .where('numViews', isGreaterThanOrEqualTo: 10)
                               .orderBy('timePosted', descending: true),
                         ),
                         builder: (context, snapshot) {
@@ -129,17 +134,21 @@ class _CategoryDetailsWidgetState extends State<CategoryDetailsWidget> {
                           if (!snapshot.hasData) {
                             return Center(
                               child: SizedBox(
-                                width: 50,
-                                height: 50,
-                                child: CircularProgressIndicator(
+                                width: 20,
+                                height: 20,
+                                child: SpinKitRipple(
                                   color:
                                       FlutterFlowTheme.of(context).primaryColor,
+                                  size: 20,
                                 ),
                               ),
                             );
                           }
                           List<UserPostsRecord> columnUserPostsRecordList =
                               snapshot.data;
+                          if (columnUserPostsRecordList.isEmpty) {
+                            return NoDataWidget();
+                          }
                           return Column(
                             mainAxisSize: MainAxisSize.max,
                             crossAxisAlignment: CrossAxisAlignment.start,

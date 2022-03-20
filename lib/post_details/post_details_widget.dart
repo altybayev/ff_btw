@@ -1,16 +1,21 @@
 import '../auth/auth_util.dart';
 import '../backend/backend.dart';
 import '../components/block_item_widget.dart';
+import '../components/bs_add_comment_widget.dart';
+import '../components/comment_card_widget.dart';
 import '../flutter_flow/flutter_flow_expanded_image_view.dart';
 import '../flutter_flow/flutter_flow_icon_button.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
 import '../flutter_flow/flutter_flow_util.dart';
 import '../main.dart';
 import '../profile_show_other/profile_show_other_widget.dart';
+import '../custom_code/actions/index.dart' as actions;
 import '../flutter_flow/custom_functions.dart' as functions;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:page_transition/page_transition.dart';
 
@@ -28,6 +33,18 @@ class PostDetailsWidget extends StatefulWidget {
 
 class _PostDetailsWidgetState extends State<PostDetailsWidget> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
+
+  @override
+  void initState() {
+    super.initState();
+    // On page load action.
+    SchedulerBinding.instance.addPostFrameCallback((_) async {
+      final userPostsUpdateData = {
+        'numViews': FieldValue.increment(0),
+      };
+      await widget.postReference.update(userPostsUpdateData);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,10 +86,11 @@ class _PostDetailsWidgetState extends State<PostDetailsWidget> {
             if (!snapshot.hasData) {
               return Center(
                 child: SizedBox(
-                  width: 50,
-                  height: 50,
-                  child: CircularProgressIndicator(
+                  width: 20,
+                  height: 20,
+                  child: SpinKitRipple(
                     color: FlutterFlowTheme.of(context).primaryColor,
+                    size: 20,
                   ),
                 ),
               );
@@ -115,11 +133,12 @@ class _PostDetailsWidgetState extends State<PostDetailsWidget> {
                             if (!snapshot.hasData) {
                               return Center(
                                 child: SizedBox(
-                                  width: 50,
-                                  height: 50,
-                                  child: CircularProgressIndicator(
+                                  width: 20,
+                                  height: 20,
+                                  child: SpinKitRipple(
                                     color: FlutterFlowTheme.of(context)
                                         .primaryColor,
+                                    size: 20,
                                   ),
                                 ),
                               );
@@ -225,17 +244,130 @@ class _PostDetailsWidgetState extends State<PostDetailsWidget> {
                                   Icons.share_outlined,
                                   color:
                                       FlutterFlowTheme.of(context).primaryColor,
-                                  size: 24,
+                                  size: 32,
                                 ),
-                                Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
-                                      16, 0, 0, 0),
-                                  child: Icon(
-                                    Icons.outlined_flag,
-                                    color: FlutterFlowTheme.of(context)
-                                        .primaryColor,
-                                    size: 24,
-                                  ),
+                                Stack(
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                          16, 0, 0, 0),
+                                      child: InkWell(
+                                        onTap: () async {
+                                          final favoritesCreateData =
+                                              createFavoritesRecordData(
+                                            userRef: currentUserReference,
+                                            createdAt: getCurrentTimestamp,
+                                            postRef: widget.postReference,
+                                          );
+                                          await FavoritesRecord.collection
+                                              .doc()
+                                              .set(favoritesCreateData);
+
+                                          final userPostsUpdateData = {
+                                            'favorites': FieldValue.arrayUnion(
+                                                [currentUserReference]),
+                                            'numFavorites':
+                                                FieldValue.increment(0),
+                                          };
+                                          await widget.postReference
+                                              .update(userPostsUpdateData);
+                                          await actions.updateConnection(
+                                            currentUserReference,
+                                            stackUserPostsRecord.postUser,
+                                            10,
+                                          );
+                                        },
+                                        child: Icon(
+                                          Icons.outlined_flag,
+                                          color: FlutterFlowTheme.of(context)
+                                              .primaryColor,
+                                          size: 32,
+                                        ),
+                                      ),
+                                    ),
+                                    if (functions.isFavoritedByUser(
+                                            stackUserPostsRecord,
+                                            currentUserReference) ??
+                                        true)
+                                      Padding(
+                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                            16, 0, 0, 0),
+                                        child: StreamBuilder<
+                                            List<FavoritesRecord>>(
+                                          stream: queryFavoritesRecord(
+                                            queryBuilder: (favoritesRecord) =>
+                                                favoritesRecord
+                                                    .where('userRef',
+                                                        isEqualTo:
+                                                            currentUserReference)
+                                                    .where('postRef',
+                                                        isEqualTo: widget
+                                                            .postReference),
+                                            singleRecord: true,
+                                          ),
+                                          builder: (context, snapshot) {
+                                            // Customize what your widget looks like when it's loading.
+                                            if (!snapshot.hasData) {
+                                              return Center(
+                                                child: SizedBox(
+                                                  width: 20,
+                                                  height: 20,
+                                                  child: SpinKitRipple(
+                                                    color: FlutterFlowTheme.of(
+                                                            context)
+                                                        .primaryColor,
+                                                    size: 20,
+                                                  ),
+                                                ),
+                                              );
+                                            }
+                                            List<FavoritesRecord>
+                                                removeFromFavBtnFavoritesRecordList =
+                                                snapshot.data;
+                                            // Return an empty Container when the document does not exist.
+                                            if (snapshot.data.isEmpty) {
+                                              return Container();
+                                            }
+                                            final removeFromFavBtnFavoritesRecord =
+                                                removeFromFavBtnFavoritesRecordList
+                                                        .isNotEmpty
+                                                    ? removeFromFavBtnFavoritesRecordList
+                                                        .first
+                                                    : null;
+                                            return InkWell(
+                                              onTap: () async {
+                                                final userPostsUpdateData = {
+                                                  'favorites':
+                                                      FieldValue.arrayRemove([
+                                                    currentUserReference
+                                                  ]),
+                                                  'numFavorites':
+                                                      FieldValue.increment(0),
+                                                };
+                                                await widget.postReference
+                                                    .update(
+                                                        userPostsUpdateData);
+                                                await removeFromFavBtnFavoritesRecord
+                                                    .reference
+                                                    .delete();
+                                                await actions.updateConnection(
+                                                  currentUserReference,
+                                                  stackUserPostsRecord.postUser,
+                                                  -10,
+                                                );
+                                              },
+                                              child: Icon(
+                                                Icons.flag_rounded,
+                                                color:
+                                                    FlutterFlowTheme.of(context)
+                                                        .primaryColor,
+                                                size: 32,
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                  ],
                                 ),
                               ],
                             );
@@ -300,10 +432,15 @@ class _PostDetailsWidgetState extends State<PostDetailsWidget> {
                                     final userPostsUpdateData = {
                                       'likes': FieldValue.arrayUnion(
                                           [currentUserReference]),
-                                      'numLikes': FieldValue.increment(1),
+                                      'numLikes': FieldValue.increment(0),
                                     };
                                     await widget.postReference
                                         .update(userPostsUpdateData);
+                                    await actions.updateConnection(
+                                      currentUserReference,
+                                      stackUserPostsRecord.postUser,
+                                      5,
+                                    );
                                   },
                                   child: Container(
                                     height: 48,
@@ -378,10 +515,15 @@ class _PostDetailsWidgetState extends State<PostDetailsWidget> {
                                     final userPostsUpdateData = {
                                       'likes': FieldValue.arrayRemove(
                                           [currentUserReference]),
-                                      'numLikes': FieldValue.increment(-1),
+                                      'numLikes': FieldValue.increment(0),
                                     };
                                     await widget.postReference
                                         .update(userPostsUpdateData);
+                                    await actions.updateConnection(
+                                      currentUserReference,
+                                      stackUserPostsRecord.postUser,
+                                      -5,
+                                    );
                                   },
                                   child: Container(
                                     height: 48,
@@ -442,7 +584,7 @@ class _PostDetailsWidgetState extends State<PostDetailsWidget> {
                         ],
                       ),
                       Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(40, 16, 40, 0),
+                        padding: EdgeInsetsDirectional.fromSTEB(40, 20, 40, 0),
                         child: FutureBuilder<List<BlocksRecord>>(
                           future: queryBlocksRecordOnce(
                             queryBuilder: (blocksRecord) => blocksRecord
@@ -455,11 +597,12 @@ class _PostDetailsWidgetState extends State<PostDetailsWidget> {
                             if (!snapshot.hasData) {
                               return Center(
                                 child: SizedBox(
-                                  width: 50,
-                                  height: 50,
-                                  child: CircularProgressIndicator(
+                                  width: 20,
+                                  height: 20,
+                                  child: SpinKitRipple(
                                     color: FlutterFlowTheme.of(context)
                                         .primaryColor,
+                                    size: 20,
                                   ),
                                 ),
                               );
@@ -474,6 +617,157 @@ class _PostDetailsWidgetState extends State<PostDetailsWidget> {
                                     columnBlocksRecordList[columnIndex];
                                 return BlockItemWidget(
                                   block: columnBlocksRecord,
+                                );
+                              }),
+                            );
+                          },
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsetsDirectional.fromSTEB(40, 20, 40, 0),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            Text(
+                              'Comments ',
+                              style: FlutterFlowTheme.of(context).title2,
+                            ),
+                            Text(
+                              '(',
+                              style: FlutterFlowTheme.of(context).title2,
+                            ),
+                            Text(
+                              valueOrDefault<String>(
+                                formatNumber(
+                                  stackUserPostsRecord.numComments,
+                                  formatType: FormatType.compact,
+                                ),
+                                '0',
+                              ),
+                              style: FlutterFlowTheme.of(context).title2,
+                            ),
+                            Text(
+                              ')',
+                              style: FlutterFlowTheme.of(context).title2,
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsetsDirectional.fromSTEB(40, 16, 40, 0),
+                        child: InkWell(
+                          onTap: () async {
+                            await showModalBottomSheet(
+                              isScrollControlled: true,
+                              backgroundColor: Colors.white,
+                              context: context,
+                              builder: (context) {
+                                return Padding(
+                                  padding: MediaQuery.of(context).viewInsets,
+                                  child: BsAddCommentWidget(
+                                    userPost: stackUserPostsRecord,
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                          child: Container(
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              boxShadow: [
+                                BoxShadow(
+                                  blurRadius: 15,
+                                  color: Color(0x98D9DFEB),
+                                  offset: Offset(0, 10),
+                                )
+                              ],
+                              borderRadius: BorderRadius.only(
+                                bottomLeft: Radius.circular(12),
+                                bottomRight: Radius.circular(12),
+                                topLeft: Radius.circular(16),
+                                topRight: Radius.circular(12),
+                              ),
+                            ),
+                            child: Padding(
+                              padding: EdgeInsetsDirectional.fromSTEB(
+                                  16, 10, 16, 10),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  AuthUserStreamWidget(
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(12),
+                                      child: CachedNetworkImage(
+                                        imageUrl: currentUserPhoto,
+                                        width: 40,
+                                        height: 40,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                        8, 0, 0, 0),
+                                    child: Text(
+                                      'Add a comment...',
+                                      style: FlutterFlowTheme.of(context)
+                                          .bodyText2
+                                          .override(
+                                            fontFamily: 'Lato',
+                                            fontSize: 16,
+                                          ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsetsDirectional.fromSTEB(40, 20, 40, 20),
+                        child: StreamBuilder<List<PostCommentsRecord>>(
+                          stream: queryPostCommentsRecord(
+                            queryBuilder: (postCommentsRecord) =>
+                                postCommentsRecord
+                                    .where('post',
+                                        isEqualTo:
+                                            stackUserPostsRecord.reference)
+                                    .where('level', isEqualTo: 0)
+                                    .orderBy('timePosted', descending: true),
+                          ),
+                          builder: (context, snapshot) {
+                            // Customize what your widget looks like when it's loading.
+                            if (!snapshot.hasData) {
+                              return Center(
+                                child: SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: SpinKitRipple(
+                                    color: FlutterFlowTheme.of(context)
+                                        .primaryColor,
+                                    size: 20,
+                                  ),
+                                ),
+                              );
+                            }
+                            List<PostCommentsRecord>
+                                columnPostCommentsRecordList = snapshot.data;
+                            return Column(
+                              mainAxisSize: MainAxisSize.max,
+                              children: List.generate(
+                                  columnPostCommentsRecordList.length,
+                                  (columnIndex) {
+                                final columnPostCommentsRecord =
+                                    columnPostCommentsRecordList[columnIndex];
+                                return Padding(
+                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                      0, 0, 0, 30),
+                                  child: CommentCardWidget(
+                                    comment: columnPostCommentsRecord,
+                                    post: stackUserPostsRecord,
+                                  ),
                                 );
                               }),
                             );

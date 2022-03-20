@@ -5,6 +5,7 @@ import '../flutter_flow/flutter_flow_icon_button.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
 import '../flutter_flow/flutter_flow_util.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -42,10 +43,11 @@ class _StoryDetailsWidgetState extends State<StoryDetailsWidget> {
                   if (!snapshot.hasData) {
                     return Center(
                       child: SizedBox(
-                        width: 50,
-                        height: 50,
-                        child: CircularProgressIndicator(
+                        width: 20,
+                        height: 20,
+                        child: SpinKitRipple(
                           color: FlutterFlowTheme.of(context).primaryColor,
+                          size: 20,
                         ),
                       ),
                     );
@@ -139,13 +141,14 @@ class _StoryDetailsWidgetState extends State<StoryDetailsWidget> {
                                                         if (!snapshot.hasData) {
                                                           return Center(
                                                             child: SizedBox(
-                                                              width: 50,
-                                                              height: 50,
+                                                              width: 20,
+                                                              height: 20,
                                                               child:
-                                                                  CircularProgressIndicator(
+                                                                  SpinKitRipple(
                                                                 color: FlutterFlowTheme.of(
                                                                         context)
                                                                     .primaryColor,
+                                                                size: 20,
                                                               ),
                                                             ),
                                                           );

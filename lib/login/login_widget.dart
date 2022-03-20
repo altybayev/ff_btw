@@ -6,6 +6,7 @@ import '../forgot_password/forgot_password_widget.dart';
 import '../main.dart';
 import '../register/register_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class LoginWidget extends StatefulWidget {

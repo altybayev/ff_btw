@@ -5,6 +5,7 @@ import '../flutter_flow/flutter_flow_util.dart';
 import '../flutter_flow/flutter_flow_widgets.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class CommentsWidget extends StatefulWidget {
@@ -43,10 +44,11 @@ class _CommentsWidgetState extends State<CommentsWidget> {
           if (!snapshot.hasData) {
             return Center(
               child: SizedBox(
-                width: 50,
-                height: 50,
-                child: CircularProgressIndicator(
+                width: 20,
+                height: 20,
+                child: SpinKitRipple(
                   color: FlutterFlowTheme.of(context).primaryColor,
+                  size: 20,
                 ),
               ),
             );
@@ -96,11 +98,12 @@ class _CommentsWidgetState extends State<CommentsWidget> {
                           if (!snapshot.hasData) {
                             return Center(
                               child: SizedBox(
-                                width: 50,
-                                height: 50,
-                                child: CircularProgressIndicator(
+                                width: 20,
+                                height: 20,
+                                child: SpinKitRipple(
                                   color:
                                       FlutterFlowTheme.of(context).primaryColor,
+                                  size: 20,
                                 ),
                               ),
                             );
@@ -136,11 +139,12 @@ class _CommentsWidgetState extends State<CommentsWidget> {
                                     if (!snapshot.hasData) {
                                       return Center(
                                         child: SizedBox(
-                                          width: 50,
-                                          height: 50,
-                                          child: CircularProgressIndicator(
+                                          width: 20,
+                                          height: 20,
+                                          child: SpinKitRipple(
                                             color: FlutterFlowTheme.of(context)
                                                 .primaryColor,
+                                            size: 20,
                                           ),
                                         ),
                                       );
@@ -348,7 +352,7 @@ class _CommentsWidgetState extends State<CommentsWidget> {
                                 .set(storyCommentsCreateData);
 
                             final userStoriesUpdateData = {
-                              'numComments': FieldValue.increment(1),
+                              'numComments': FieldValue.increment(0),
                             };
                             await columnUserStoriesRecord.reference
                                 .update(userStoriesUpdateData);

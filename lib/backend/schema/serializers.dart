@@ -13,6 +13,10 @@ import 'categories_record.dart';
 import 'blocks_record.dart';
 import 'tags_record.dart';
 import 'followers_record.dart';
+import 'comment_replies_record.dart';
+import 'favorites_record.dart';
+import 'connections_record.dart';
+import 'feeds_record.dart';
 
 import 'index.dart';
 
@@ -36,6 +40,10 @@ const kDocumentReferenceField = 'Document__Reference__Field';
   BlocksRecord,
   TagsRecord,
   FollowersRecord,
+  CommentRepliesRecord,
+  FavoritesRecord,
+  ConnectionsRecord,
+  FeedsRecord,
 ])
 final Serializers serializers = (_$serializers.toBuilder()
       ..add(DocumentReferenceSerializer())

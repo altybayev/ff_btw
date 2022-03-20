@@ -10,6 +10,7 @@ import '../flutter_flow/custom_functions.dart' as functions;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class PostDetailsCopyWidget extends StatefulWidget {
@@ -45,10 +46,11 @@ class _PostDetailsCopyWidgetState extends State<PostDetailsCopyWidget> {
         if (!snapshot.hasData) {
           return Center(
             child: SizedBox(
-              width: 50,
-              height: 50,
-              child: CircularProgressIndicator(
+              width: 20,
+              height: 20,
+              child: SpinKitRipple(
                 color: FlutterFlowTheme.of(context).primaryColor,
+                size: 20,
               ),
             ),
           );
@@ -411,11 +413,12 @@ class _PostDetailsCopyWidgetState extends State<PostDetailsCopyWidget> {
                                     if (!snapshot.hasData) {
                                       return Center(
                                         child: SizedBox(
-                                          width: 50,
-                                          height: 50,
-                                          child: CircularProgressIndicator(
+                                          width: 20,
+                                          height: 20,
+                                          child: SpinKitRipple(
                                             color: FlutterFlowTheme.of(context)
                                                 .primaryColor,
+                                            size: 20,
                                           ),
                                         ),
                                       );
@@ -457,14 +460,14 @@ class _PostDetailsCopyWidgetState extends State<PostDetailsCopyWidget> {
                                               if (!snapshot.hasData) {
                                                 return Center(
                                                   child: SizedBox(
-                                                    width: 50,
-                                                    height: 50,
-                                                    child:
-                                                        CircularProgressIndicator(
+                                                    width: 20,
+                                                    height: 20,
+                                                    child: SpinKitRipple(
                                                       color:
                                                           FlutterFlowTheme.of(
                                                                   context)
                                                               .primaryColor,
+                                                      size: 20,
                                                     ),
                                                   ),
                                                 );
@@ -716,7 +719,7 @@ class _PostDetailsCopyWidgetState extends State<PostDetailsCopyWidget> {
                                         .set(postCommentsCreateData);
 
                                     final userPostsUpdateData = {
-                                      'numComments': FieldValue.increment(1),
+                                      'numComments': FieldValue.increment(0),
                                     };
                                     await postDetailsCopyUserPostsRecord
                                         .reference

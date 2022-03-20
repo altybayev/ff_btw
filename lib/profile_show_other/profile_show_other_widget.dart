@@ -4,11 +4,15 @@ import '../components/post_preview_card_copy_widget.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
 import '../flutter_flow/flutter_flow_util.dart';
 import '../flutter_flow/flutter_flow_widgets.dart';
+import '../user_followers/user_followers_widget.dart';
+import '../user_following/user_following_widget.dart';
 import '../custom_code/actions/index.dart' as actions;
 import '../flutter_flow/custom_functions.dart' as functions;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -29,6 +33,19 @@ class _ProfileShowOtherWidgetState extends State<ProfileShowOtherWidget> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
+  void initState() {
+    super.initState();
+    // On page load action.
+    SchedulerBinding.instance.addPostFrameCallback((_) async {
+      await actions.updateConnection(
+        currentUserReference,
+        widget.ownerRef,
+        10,
+      );
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return StreamBuilder<UsersRecord>(
       stream: UsersRecord.getDocument(widget.ownerRef),
@@ -37,10 +54,11 @@ class _ProfileShowOtherWidgetState extends State<ProfileShowOtherWidget> {
         if (!snapshot.hasData) {
           return Center(
             child: SizedBox(
-              width: 50,
-              height: 50,
-              child: CircularProgressIndicator(
+              width: 20,
+              height: 20,
+              child: SpinKitRipple(
                 color: FlutterFlowTheme.of(context).primaryColor,
+                size: 20,
               ),
             ),
           );
@@ -210,7 +228,7 @@ class _ProfileShowOtherWidgetState extends State<ProfileShowOtherWidget> {
                                                   ),
                                                   Stack(
                                                     children: [
-                                                      if (!(functions.isFollowingByUser(
+                                                      if (!(functions.isFollowedByUser(
                                                               profileShowOtherUsersRecord,
                                                               currentUserReference)) ??
                                                           true)
@@ -232,12 +250,17 @@ class _ProfileShowOtherWidgetState extends State<ProfileShowOtherWidget> {
                                                                 'followers_count':
                                                                     FieldValue
                                                                         .increment(
-                                                                            1),
+                                                                            0),
                                                               };
                                                               await widget
                                                                   .ownerRef
                                                                   .update(
                                                                       usersUpdateData);
+                                                              await actions
+                                                                  .follow(
+                                                                widget.ownerRef,
+                                                                currentUserReference,
+                                                              );
 
                                                               final followersCreateData =
                                                                   createFollowersRecordData(
@@ -261,6 +284,13 @@ class _ProfileShowOtherWidgetState extends State<ProfileShowOtherWidget> {
                                                                       .getDocumentFromData(
                                                                           followersCreateData,
                                                                           followersRecordReference);
+                                                              await actions
+                                                                  .updateConnection(
+                                                                currentUserReference,
+                                                                profileShowOtherUsersRecord
+                                                                    .reference,
+                                                                5,
+                                                              );
 
                                                               setState(() {});
                                                             },
@@ -292,9 +322,9 @@ class _ProfileShowOtherWidgetState extends State<ProfileShowOtherWidget> {
                                                             ),
                                                           ),
                                                         ),
-                                                      if (!(functions.isFollowingByUser(
+                                                      if (functions.isFollowedByUser(
                                                               profileShowOtherUsersRecord,
-                                                              currentUserReference)) ??
+                                                              currentUserReference) ??
                                                           true)
                                                         Padding(
                                                           padding:
@@ -314,16 +344,28 @@ class _ProfileShowOtherWidgetState extends State<ProfileShowOtherWidget> {
                                                                 'followers_count':
                                                                     FieldValue
                                                                         .increment(
-                                                                            -1),
+                                                                            0),
                                                               };
                                                               await widget
                                                                   .ownerRef
                                                                   .update(
                                                                       usersUpdateData);
                                                               await actions
+                                                                  .unfollow(
+                                                                widget.ownerRef,
+                                                                currentUserReference,
+                                                              );
+                                                              await actions
                                                                   .deleteFromFollowers(
                                                                 widget.ownerRef,
                                                                 currentUserReference,
+                                                              );
+                                                              await actions
+                                                                  .updateConnection(
+                                                                currentUserReference,
+                                                                profileShowOtherUsersRecord
+                                                                    .reference,
+                                                                -5,
                                                               );
                                                             },
                                                             text: 'Unfollow',
@@ -475,92 +517,13 @@ class _ProfileShowOtherWidgetState extends State<ProfileShowOtherWidget> {
                                   ),
                                   InkWell(
                                     onTap: () async {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        SnackBar(
-                                          content: Text(
-                                            'Show Following',
-                                            style: FlutterFlowTheme.of(context)
-                                                .bodyText1,
+                                      await Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              UserFollowersWidget(
+                                            owner: profileShowOtherUsersRecord,
                                           ),
-                                          duration:
-                                              Duration(milliseconds: 4000),
-                                          backgroundColor: Color(0x00000000),
-                                        ),
-                                      );
-                                    },
-                                    child: Container(
-                                      width: 75,
-                                      decoration: BoxDecoration(
-                                        color: FlutterFlowTheme.of(context)
-                                            .primaryColor,
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      child: Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                            0, 12, 0, 12),
-                                        child: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                              valueOrDefault<String>(
-                                                formatNumber(
-                                                  profileShowOtherUsersRecord
-                                                      .followingCount,
-                                                  formatType:
-                                                      FormatType.compact,
-                                                ),
-                                                '0',
-                                              ),
-                                              style:
-                                                  FlutterFlowTheme.of(context)
-                                                      .title2
-                                                      .override(
-                                                        fontFamily: 'Lato',
-                                                        color: Colors.white,
-                                                        fontWeight:
-                                                            FontWeight.normal,
-                                                      ),
-                                            ),
-                                            Padding(
-                                              padding: EdgeInsetsDirectional
-                                                  .fromSTEB(0, 4, 0, 0),
-                                              child: Text(
-                                                'following',
-                                                style:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyText2
-                                                        .override(
-                                                          fontFamily: 'Lato',
-                                                          color: Colors.white,
-                                                          fontSize: 12,
-                                                        ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  InkWell(
-                                    onTap: () async {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        SnackBar(
-                                          content: Text(
-                                            'Show Folowers',
-                                            style: FlutterFlowTheme.of(context)
-                                                .bodyText1
-                                                .override(
-                                                  fontFamily: 'Lato',
-                                                  color: Colors.white,
-                                                ),
-                                          ),
-                                          duration:
-                                              Duration(milliseconds: 4000),
-                                          backgroundColor: Color(0x00000000),
                                         ),
                                       );
                                     },
@@ -604,6 +567,73 @@ class _ProfileShowOtherWidgetState extends State<ProfileShowOtherWidget> {
                                                   .fromSTEB(0, 4, 0, 0),
                                               child: Text(
                                                 'followers',
+                                                style:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyText2
+                                                        .override(
+                                                          fontFamily: 'Lato',
+                                                          color: Colors.white,
+                                                          fontSize: 12,
+                                                        ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  InkWell(
+                                    onTap: () async {
+                                      await Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              UserFollowingWidget(
+                                            owner: profileShowOtherUsersRecord,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    child: Container(
+                                      width: 75,
+                                      decoration: BoxDecoration(
+                                        color: FlutterFlowTheme.of(context)
+                                            .primaryColor,
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      child: Padding(
+                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                            0, 12, 0, 12),
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              valueOrDefault<String>(
+                                                formatNumber(
+                                                  profileShowOtherUsersRecord
+                                                      .followingCount,
+                                                  formatType:
+                                                      FormatType.compact,
+                                                ),
+                                                '0',
+                                              ),
+                                              style:
+                                                  FlutterFlowTheme.of(context)
+                                                      .title2
+                                                      .override(
+                                                        fontFamily: 'Lato',
+                                                        color: Colors.white,
+                                                        fontWeight:
+                                                            FontWeight.normal,
+                                                      ),
+                                            ),
+                                            Padding(
+                                              padding: EdgeInsetsDirectional
+                                                  .fromSTEB(0, 4, 0, 0),
+                                              child: Text(
+                                                'following',
                                                 style:
                                                     FlutterFlowTheme.of(context)
                                                         .bodyText2
@@ -685,11 +715,12 @@ class _ProfileShowOtherWidgetState extends State<ProfileShowOtherWidget> {
                                     if (!snapshot.hasData) {
                                       return Center(
                                         child: SizedBox(
-                                          width: 50,
-                                          height: 50,
-                                          child: CircularProgressIndicator(
+                                          width: 20,
+                                          height: 20,
+                                          child: SpinKitRipple(
                                             color: FlutterFlowTheme.of(context)
                                                 .primaryColor,
+                                            size: 20,
                                           ),
                                         ),
                                       );

@@ -6,6 +6,7 @@ import '../flutter_flow/flutter_flow_util.dart';
 import '../flutter_flow/flutter_flow_widgets.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class DeletePostWidget extends StatefulWidget {
@@ -30,12 +31,8 @@ class _DeletePostWidgetState extends State<DeletePostWidget> {
         children: [
           Row(
             mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Text(
-                'Settings',
-                style: FlutterFlowTheme.of(context).title2,
-              ),
               InkWell(
                 onTap: () async {
                   Navigator.pop(context);
@@ -114,7 +111,7 @@ class _DeletePostWidgetState extends State<DeletePostWidget> {
                   await widget.postRef.delete();
 
                   final usersUpdateData = {
-                    'posts_count': FieldValue.increment(-1),
+                    'posts_count': FieldValue.increment(0),
                   };
                   await currentUserReference.update(usersUpdateData);
                   Navigator.pop(context);

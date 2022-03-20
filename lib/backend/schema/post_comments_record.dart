@@ -24,11 +24,35 @@ abstract class PostCommentsRecord
   DocumentReference get post;
 
   @nullable
+  BuiltList<DocumentReference> get likes;
+
+  @nullable
+  BuiltList<DocumentReference> get dislikes;
+
+  @nullable
+  int get numLikes;
+
+  @nullable
+  int get numDislikes;
+
+  @nullable
+  int get numReplies;
+
+  @nullable
+  int get level;
+
+  @nullable
   @BuiltValueField(wireName: kDocumentReferenceField)
   DocumentReference get reference;
 
-  static void _initializeBuilder(PostCommentsRecordBuilder builder) =>
-      builder..comment = '';
+  static void _initializeBuilder(PostCommentsRecordBuilder builder) => builder
+    ..comment = ''
+    ..likes = ListBuilder()
+    ..dislikes = ListBuilder()
+    ..numLikes = 0
+    ..numDislikes = 0
+    ..numReplies = 0
+    ..level = 0;
 
   static CollectionReference get collection =>
       FirebaseFirestore.instance.collection('postComments');
@@ -57,6 +81,10 @@ Map<String, dynamic> createPostCommentsRecordData({
   String comment,
   DocumentReference user,
   DocumentReference post,
+  int numLikes,
+  int numDislikes,
+  int numReplies,
+  int level,
 }) =>
     serializers.toFirestore(
         PostCommentsRecord.serializer,
@@ -64,4 +92,10 @@ Map<String, dynamic> createPostCommentsRecordData({
           ..timePosted = timePosted
           ..comment = comment
           ..user = user
-          ..post = post));
+          ..post = post
+          ..likes = null
+          ..dislikes = null
+          ..numLikes = numLikes
+          ..numDislikes = numDislikes
+          ..numReplies = numReplies
+          ..level = level));

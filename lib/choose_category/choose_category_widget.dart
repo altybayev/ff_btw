@@ -5,6 +5,7 @@ import '../flutter_flow/flutter_flow_theme.dart';
 import '../flutter_flow/flutter_flow_util.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class ChooseCategoryWidget extends StatefulWidget {
@@ -91,11 +92,12 @@ class _ChooseCategoryWidgetState extends State<ChooseCategoryWidget> {
                         if (!snapshot.hasData) {
                           return Center(
                             child: SizedBox(
-                              width: 50,
-                              height: 50,
-                              child: CircularProgressIndicator(
+                              width: 20,
+                              height: 20,
+                              child: SpinKitRipple(
                                 color:
                                     FlutterFlowTheme.of(context).primaryColor,
+                                size: 20,
                               ),
                             ),
                           );

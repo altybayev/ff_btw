@@ -4,11 +4,15 @@ import '../flutter_flow/flutter_flow_icon_button.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
 import '../flutter_flow/flutter_flow_util.dart';
 import '../flutter_flow/flutter_flow_widgets.dart';
+import '../main.dart';
+import '../profile_show_other/profile_show_other_widget.dart';
 import '../custom_code/actions/index.dart' as actions;
 import '../flutter_flow/custom_functions.dart' as functions;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -26,6 +30,19 @@ class UserFollowersWidget extends StatefulWidget {
 
 class _UserFollowersWidgetState extends State<UserFollowersWidget> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
+
+  @override
+  void initState() {
+    super.initState();
+    // On page load action.
+    SchedulerBinding.instance.addPostFrameCallback((_) async {
+      await actions.updateConnection(
+        currentUserReference,
+        widget.owner.reference,
+        5,
+      );
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,10 +69,11 @@ class _UserFollowersWidgetState extends State<UserFollowersWidget> {
               if (!snapshot.hasData) {
                 return Center(
                   child: SizedBox(
-                    width: 50,
-                    height: 50,
-                    child: CircularProgressIndicator(
+                    width: 20,
+                    height: 20,
+                    child: SpinKitRipple(
                       color: FlutterFlowTheme.of(context).primaryColor,
+                      size: 20,
                     ),
                   ),
                 );
@@ -91,15 +109,42 @@ class _UserFollowersWidgetState extends State<UserFollowersWidget> {
                               mainAxisSize: MainAxisSize.max,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  'Followers',
-                                  style: FlutterFlowTheme.of(context)
-                                      .title1
-                                      .override(
-                                        fontFamily: 'Lato',
-                                        color: FlutterFlowTheme.of(context)
-                                            .primaryDark,
+                                Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    Text(
+                                      'Followers',
+                                      style: FlutterFlowTheme.of(context)
+                                          .title1
+                                          .override(
+                                            fontFamily: 'Lato',
+                                            color: FlutterFlowTheme.of(context)
+                                                .primaryDark,
+                                          ),
+                                    ),
+                                    Text(
+                                      ' (',
+                                      style:
+                                          FlutterFlowTheme.of(context).title1,
+                                    ),
+                                    Text(
+                                      valueOrDefault<String>(
+                                        formatNumber(
+                                          mainContainerUsersRecord
+                                              .followersCount,
+                                          formatType: FormatType.compact,
+                                        ),
+                                        '0',
                                       ),
+                                      style:
+                                          FlutterFlowTheme.of(context).title1,
+                                    ),
+                                    Text(
+                                      ')',
+                                      style:
+                                          FlutterFlowTheme.of(context).title1,
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
@@ -129,11 +174,12 @@ class _UserFollowersWidgetState extends State<UserFollowersWidget> {
                               if (!snapshot.hasData) {
                                 return Center(
                                   child: SizedBox(
-                                    width: 50,
-                                    height: 50,
-                                    child: CircularProgressIndicator(
+                                    width: 20,
+                                    height: 20,
+                                    child: SpinKitRipple(
                                       color: FlutterFlowTheme.of(context)
                                           .primaryColor,
+                                      size: 20,
                                     ),
                                   ),
                                 );
@@ -159,12 +205,13 @@ class _UserFollowersWidgetState extends State<UserFollowersWidget> {
                                         if (!snapshot.hasData) {
                                           return Center(
                                             child: SizedBox(
-                                              width: 50,
-                                              height: 50,
-                                              child: CircularProgressIndicator(
+                                              width: 20,
+                                              height: 20,
+                                              child: SpinKitRipple(
                                                 color:
                                                     FlutterFlowTheme.of(context)
                                                         .primaryColor,
+                                                size: 20,
                                               ),
                                             ),
                                           );
@@ -175,34 +222,63 @@ class _UserFollowersWidgetState extends State<UserFollowersWidget> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            Container(
-                                              width: 84,
-                                              height: 84,
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(28),
-                                                border: Border.all(
-                                                  color: FlutterFlowTheme.of(
-                                                          context)
-                                                      .darkBlue,
-                                                  width: 2,
-                                                ),
-                                              ),
-                                              child: Padding(
-                                                padding: EdgeInsetsDirectional
-                                                    .fromSTEB(8, 8, 8, 8),
-                                                child: ClipRRect(
-                                                  borderRadius:
-                                                      BorderRadius.circular(22),
-                                                  child: CachedNetworkImage(
-                                                    imageUrl:
-                                                        valueOrDefault<String>(
-                                                      rowUsersRecord.photoUrl,
-                                                      'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y&s=200',
+                                            InkWell(
+                                              onTap: () async {
+                                                if ((rowUsersRecord
+                                                        .reference) ==
+                                                    (currentUserReference)) {
+                                                  await Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          NavBarPage(
+                                                              initialPage:
+                                                                  'profile'),
                                                     ),
-                                                    width: 100,
-                                                    height: 100,
-                                                    fit: BoxFit.cover,
+                                                  );
+                                                } else {
+                                                  await Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          ProfileShowOtherWidget(
+                                                        ownerRef: rowUsersRecord
+                                                            .reference,
+                                                      ),
+                                                    ),
+                                                  );
+                                                }
+                                              },
+                                              child: Container(
+                                                width: 84,
+                                                height: 84,
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(28),
+                                                  border: Border.all(
+                                                    color: FlutterFlowTheme.of(
+                                                            context)
+                                                        .darkBlue,
+                                                    width: 2,
+                                                  ),
+                                                ),
+                                                child: Padding(
+                                                  padding: EdgeInsetsDirectional
+                                                      .fromSTEB(8, 8, 8, 8),
+                                                  child: ClipRRect(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            22),
+                                                    child: CachedNetworkImage(
+                                                      imageUrl: valueOrDefault<
+                                                          String>(
+                                                        rowUsersRecord.photoUrl,
+                                                        'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y&s=200',
+                                                      ),
+                                                      width: 100,
+                                                      height: 100,
+                                                      fit: BoxFit.cover,
+                                                    ),
                                                   ),
                                                 ),
                                               ),
@@ -220,12 +296,41 @@ class _UserFollowersWidgetState extends State<UserFollowersWidget> {
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.start,
                                                   children: [
-                                                    Text(
-                                                      rowUsersRecord.userName,
-                                                      style:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .title3,
+                                                    InkWell(
+                                                      onTap: () async {
+                                                        if ((rowUsersRecord
+                                                                .reference) ==
+                                                            (currentUserReference)) {
+                                                          await Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                              builder: (context) =>
+                                                                  NavBarPage(
+                                                                      initialPage:
+                                                                          'profile'),
+                                                            ),
+                                                          );
+                                                        } else {
+                                                          await Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                              builder: (context) =>
+                                                                  ProfileShowOtherWidget(
+                                                                ownerRef:
+                                                                    rowUsersRecord
+                                                                        .reference,
+                                                              ),
+                                                            ),
+                                                          );
+                                                        }
+                                                      },
+                                                      child: Text(
+                                                        rowUsersRecord.userName,
+                                                        style:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .title3,
+                                                      ),
                                                     ),
                                                     Padding(
                                                       padding:
@@ -248,156 +353,183 @@ class _UserFollowersWidgetState extends State<UserFollowersWidget> {
                                                                 ),
                                                       ),
                                                     ),
-                                                    Stack(
-                                                      children: [
-                                                        if (!(functions.isFollowingByUser(
-                                                                rowUsersRecord,
-                                                                currentUserReference)) ??
-                                                            true)
-                                                          Padding(
-                                                            padding:
-                                                                EdgeInsetsDirectional
-                                                                    .fromSTEB(
-                                                                        0,
-                                                                        12,
-                                                                        0,
-                                                                        0),
-                                                            child:
-                                                                FFButtonWidget(
-                                                              onPressed:
-                                                                  () async {
-                                                                final usersUpdateData =
-                                                                    {
-                                                                  'followers_count':
-                                                                      FieldValue
-                                                                          .increment(
-                                                                              1),
-                                                                  'followers':
-                                                                      FieldValue
-                                                                          .arrayUnion([
-                                                                    currentUserReference
-                                                                  ]),
-                                                                };
-                                                                await rowUsersRecord
-                                                                    .reference
-                                                                    .update(
-                                                                        usersUpdateData);
+                                                    if ((rowUsersRecord
+                                                            .reference) !=
+                                                        (currentUserReference))
+                                                      Stack(
+                                                        children: [
+                                                          if (!(functions.isFollowedByUser(
+                                                                  rowUsersRecord,
+                                                                  currentUserReference)) ??
+                                                              true)
+                                                            Padding(
+                                                              padding:
+                                                                  EdgeInsetsDirectional
+                                                                      .fromSTEB(
+                                                                          0,
+                                                                          12,
+                                                                          0,
+                                                                          0),
+                                                              child:
+                                                                  FFButtonWidget(
+                                                                onPressed:
+                                                                    () async {
+                                                                  final usersUpdateData =
+                                                                      {
+                                                                    'followers_count':
+                                                                        FieldValue
+                                                                            .increment(0),
+                                                                    'followers':
+                                                                        FieldValue
+                                                                            .arrayUnion([
+                                                                      currentUserReference
+                                                                    ]),
+                                                                  };
+                                                                  await rowUsersRecord
+                                                                      .reference
+                                                                      .update(
+                                                                          usersUpdateData);
+                                                                  await actions
+                                                                      .follow(
+                                                                    rowUsersRecord
+                                                                        .reference,
+                                                                    currentUserReference,
+                                                                  );
 
-                                                                final followersCreateData =
-                                                                    createFollowersRecordData(
-                                                                  followerRef:
-                                                                      currentUserReference,
-                                                                  createdAt:
-                                                                      getCurrentTimestamp,
-                                                                  followingRef:
-                                                                      rowUsersRecord
-                                                                          .reference,
-                                                                );
-                                                                await FollowersRecord
-                                                                    .collection
-                                                                    .doc()
-                                                                    .set(
-                                                                        followersCreateData);
-                                                              },
-                                                              text: 'Follow',
-                                                              options:
-                                                                  FFButtonOptions(
-                                                                width: 122,
-                                                                height: 25,
-                                                                color: FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .primaryColor,
-                                                                textStyle: FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .subtitle2
-                                                                    .override(
-                                                                      fontFamily:
-                                                                          'Lato',
-                                                                      color: Colors
-                                                                          .white,
-                                                                    ),
-                                                                borderSide:
-                                                                    BorderSide(
-                                                                  color: Colors
-                                                                      .transparent,
-                                                                  width: 1,
-                                                                ),
-                                                                borderRadius:
-                                                                    12,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        if (!(functions.isFollowingByUser(
-                                                                rowUsersRecord,
-                                                                currentUserReference)) ??
-                                                            true)
-                                                          Padding(
-                                                            padding:
-                                                                EdgeInsetsDirectional
-                                                                    .fromSTEB(
-                                                                        0,
-                                                                        12,
-                                                                        0,
-                                                                        0),
-                                                            child:
-                                                                FFButtonWidget(
-                                                              onPressed:
-                                                                  () async {
-                                                                final usersUpdateData =
-                                                                    {
-                                                                  'followers':
-                                                                      FieldValue
-                                                                          .arrayRemove([
-                                                                    currentUserReference
-                                                                  ]),
-                                                                  'followers_count':
-                                                                      FieldValue
-                                                                          .increment(
-                                                                              -1),
-                                                                };
-                                                                await rowUsersRecord
-                                                                    .reference
-                                                                    .update(
-                                                                        usersUpdateData);
-                                                                await actions
-                                                                    .deleteFromFollowers(
-                                                                  rowUsersRecord
-                                                                      .reference,
-                                                                  currentUserReference,
-                                                                );
-                                                              },
-                                                              text: 'Unfollow',
-                                                              options:
-                                                                  FFButtonOptions(
-                                                                width: 122,
-                                                                height: 25,
-                                                                color: FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .background,
-                                                                textStyle: FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .subtitle2
-                                                                    .override(
-                                                                      fontFamily:
-                                                                          'Lato',
-                                                                      color: FlutterFlowTheme.of(
-                                                                              context)
-                                                                          .primaryColor,
-                                                                    ),
-                                                                borderSide:
-                                                                    BorderSide(
+                                                                  final followersCreateData =
+                                                                      createFollowersRecordData(
+                                                                    followerRef:
+                                                                        currentUserReference,
+                                                                    createdAt:
+                                                                        getCurrentTimestamp,
+                                                                    followingRef:
+                                                                        rowUsersRecord
+                                                                            .reference,
+                                                                  );
+                                                                  await FollowersRecord
+                                                                      .collection
+                                                                      .doc()
+                                                                      .set(
+                                                                          followersCreateData);
+                                                                  await actions
+                                                                      .updateConnection(
+                                                                    currentUserReference,
+                                                                    rowUsersRecord
+                                                                        .reference,
+                                                                    5,
+                                                                  );
+                                                                },
+                                                                text: 'Follow',
+                                                                options:
+                                                                    FFButtonOptions(
+                                                                  width: 122,
+                                                                  height: 25,
                                                                   color: FlutterFlowTheme.of(
                                                                           context)
                                                                       .primaryColor,
-                                                                  width: 1,
+                                                                  textStyle: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .subtitle2
+                                                                      .override(
+                                                                        fontFamily:
+                                                                            'Lato',
+                                                                        color: Colors
+                                                                            .white,
+                                                                      ),
+                                                                  borderSide:
+                                                                      BorderSide(
+                                                                    color: Colors
+                                                                        .transparent,
+                                                                    width: 1,
+                                                                  ),
+                                                                  borderRadius:
+                                                                      12,
                                                                 ),
-                                                                borderRadius:
-                                                                    12,
                                                               ),
                                                             ),
-                                                          ),
-                                                      ],
-                                                    ),
+                                                          if (functions.isFollowedByUser(
+                                                                  rowUsersRecord,
+                                                                  currentUserReference) ??
+                                                              true)
+                                                            Padding(
+                                                              padding:
+                                                                  EdgeInsetsDirectional
+                                                                      .fromSTEB(
+                                                                          0,
+                                                                          12,
+                                                                          0,
+                                                                          0),
+                                                              child:
+                                                                  FFButtonWidget(
+                                                                onPressed:
+                                                                    () async {
+                                                                  final usersUpdateData =
+                                                                      {
+                                                                    'followers':
+                                                                        FieldValue
+                                                                            .arrayRemove([
+                                                                      currentUserReference
+                                                                    ]),
+                                                                    'followers_count':
+                                                                        FieldValue
+                                                                            .increment(0),
+                                                                  };
+                                                                  await rowUsersRecord
+                                                                      .reference
+                                                                      .update(
+                                                                          usersUpdateData);
+                                                                  await actions
+                                                                      .unfollow(
+                                                                    rowUsersRecord
+                                                                        .reference,
+                                                                    currentUserReference,
+                                                                  );
+                                                                  await actions
+                                                                      .deleteFromFollowers(
+                                                                    rowUsersRecord
+                                                                        .reference,
+                                                                    currentUserReference,
+                                                                  );
+                                                                  await actions
+                                                                      .updateConnection(
+                                                                    currentUserReference,
+                                                                    rowUsersRecord
+                                                                        .reference,
+                                                                    -5,
+                                                                  );
+                                                                },
+                                                                text:
+                                                                    'Unfollow',
+                                                                options:
+                                                                    FFButtonOptions(
+                                                                  width: 122,
+                                                                  height: 25,
+                                                                  color: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .background,
+                                                                  textStyle: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .subtitle2
+                                                                      .override(
+                                                                        fontFamily:
+                                                                            'Lato',
+                                                                        color: FlutterFlowTheme.of(context)
+                                                                            .primaryColor,
+                                                                      ),
+                                                                  borderSide:
+                                                                      BorderSide(
+                                                                    color: FlutterFlowTheme.of(
+                                                                            context)
+                                                                        .primaryColor,
+                                                                    width: 1,
+                                                                  ),
+                                                                  borderRadius:
+                                                                      12,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                        ],
+                                                      ),
                                                   ],
                                                 ),
                                               ),

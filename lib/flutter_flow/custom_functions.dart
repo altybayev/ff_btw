@@ -24,6 +24,20 @@ bool isLikedByUser(
   return post.likes.contains(userRef);
 }
 
+bool isCommentDislikedByUser(
+  PostCommentsRecord comment,
+  DocumentReference userRef,
+) {
+  return comment.dislikes.contains(userRef);
+}
+
+bool isCommentLikedByUser(
+  PostCommentsRecord comment,
+  DocumentReference userRef,
+) {
+  return comment.likes.contains(userRef);
+}
+
 bool isFollowedByUser(
   UsersRecord user,
   DocumentReference targetRef,
@@ -36,4 +50,11 @@ bool isFollowingByUser(
   DocumentReference targetRef,
 ) {
   return user.following.contains(targetRef);
+}
+
+bool isFavoritedByUser(
+  UserPostsRecord post,
+  DocumentReference userRef,
+) {
+  return post.favorites.contains(userRef);
 }

@@ -20,6 +20,7 @@ import '../flutter_flow/custom_functions.dart' as functions;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -118,7 +119,7 @@ class _EditPostWidgetState extends State<EditPostWidget> {
                   await widget.postRef.delete();
 
                   final usersUpdateData = {
-                    'posts_count': FieldValue.increment(-1),
+                    'posts_count': FieldValue.increment(0),
                   };
                   await currentUserReference.update(usersUpdateData);
                   Navigator.pop(context);
@@ -137,10 +138,11 @@ class _EditPostWidgetState extends State<EditPostWidget> {
           if (!snapshot.hasData) {
             return Center(
               child: SizedBox(
-                width: 50,
-                height: 50,
-                child: CircularProgressIndicator(
+                width: 20,
+                height: 20,
+                child: SpinKitRipple(
                   color: FlutterFlowTheme.of(context).primaryColor,
+                  size: 20,
                 ),
               ),
             );
@@ -264,13 +266,14 @@ class _EditPostWidgetState extends State<EditPostWidget> {
                                                         if (!snapshot.hasData) {
                                                           return Center(
                                                             child: SizedBox(
-                                                              width: 50,
-                                                              height: 50,
+                                                              width: 20,
+                                                              height: 20,
                                                               child:
-                                                                  CircularProgressIndicator(
+                                                                  SpinKitRipple(
                                                                 color: FlutterFlowTheme.of(
                                                                         context)
                                                                     .primaryColor,
+                                                                size: 20,
                                                               ),
                                                             ),
                                                           );
@@ -361,10 +364,6 @@ class _EditPostWidgetState extends State<EditPostWidget> {
                                                       );
                                                     },
                                                   );
-                                                  setState(() => FFAppState()
-                                                          .tagsCount =
-                                                      FFAppState().tagsCount +
-                                                          1);
                                                 },
                                               ),
                                           ],
@@ -388,14 +387,14 @@ class _EditPostWidgetState extends State<EditPostWidget> {
                                               if (!snapshot.hasData) {
                                                 return Center(
                                                   child: SizedBox(
-                                                    width: 50,
-                                                    height: 50,
-                                                    child:
-                                                        CircularProgressIndicator(
+                                                    width: 20,
+                                                    height: 20,
+                                                    child: SpinKitRipple(
                                                       color:
                                                           FlutterFlowTheme.of(
                                                                   context)
                                                               .primaryColor,
+                                                      size: 20,
                                                     ),
                                                   ),
                                                 );
@@ -473,10 +472,6 @@ class _EditPostWidgetState extends State<EditPostWidget> {
                                                                     await columnTagsRecord
                                                                         .reference
                                                                         .delete();
-                                                                    setState(() => FFAppState()
-                                                                            .tagsCount =
-                                                                        FFAppState().tagsCount -
-                                                                            1);
                                                                   },
                                                                   child: Icon(
                                                                     Icons.close,
@@ -687,14 +682,14 @@ class _EditPostWidgetState extends State<EditPostWidget> {
                                               if (!snapshot.hasData) {
                                                 return Center(
                                                   child: SizedBox(
-                                                    width: 50,
-                                                    height: 50,
-                                                    child:
-                                                        CircularProgressIndicator(
+                                                    width: 20,
+                                                    height: 20,
+                                                    child: SpinKitRipple(
                                                       color:
                                                           FlutterFlowTheme.of(
                                                                   context)
                                                               .primaryColor,
+                                                      size: 20,
                                                     ),
                                                   ),
                                                 );

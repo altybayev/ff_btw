@@ -51,6 +51,15 @@ abstract class UserPostsRecord
   String get categoryName;
 
   @nullable
+  BuiltList<DocumentReference> get favorites;
+
+  @nullable
+  int get numFavorites;
+
+  @nullable
+  int get numViews;
+
+  @nullable
   @BuiltValueField(wireName: kDocumentReferenceField)
   DocumentReference get reference;
 
@@ -64,7 +73,10 @@ abstract class UserPostsRecord
     ..numLikes = 0
     ..isDraft = false
     ..tags = ListBuilder()
-    ..categoryName = '';
+    ..categoryName = ''
+    ..favorites = ListBuilder()
+    ..numFavorites = 0
+    ..numViews = 0;
 
   static CollectionReference get collection =>
       FirebaseFirestore.instance.collection('userPosts');
@@ -99,6 +111,8 @@ Map<String, dynamic> createUserPostsRecordData({
   bool isDraft,
   DocumentReference category,
   String categoryName,
+  int numFavorites,
+  int numViews,
 }) =>
     serializers.toFirestore(
         UserPostsRecord.serializer,
@@ -115,4 +129,7 @@ Map<String, dynamic> createUserPostsRecordData({
           ..isDraft = isDraft
           ..category = category
           ..tags = null
-          ..categoryName = categoryName));
+          ..categoryName = categoryName
+          ..favorites = null
+          ..numFavorites = numFavorites
+          ..numViews = numViews));

@@ -5,9 +5,12 @@ import '../create_post/create_post_widget.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
 import '../flutter_flow/flutter_flow_util.dart';
 import '../settings/settings_widget.dart';
+import '../user_followers/user_followers_widget.dart';
+import '../user_following/user_following_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -31,10 +34,11 @@ class _ProfileWidgetState extends State<ProfileWidget> {
         if (!snapshot.hasData) {
           return Center(
             child: SizedBox(
-              width: 50,
-              height: 50,
-              child: CircularProgressIndicator(
+              width: 20,
+              height: 20,
+              child: SpinKitRipple(
                 color: FlutterFlowTheme.of(context).primaryColor,
+                size: 20,
               ),
             ),
           );
@@ -314,92 +318,13 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                                   ),
                                   InkWell(
                                     onTap: () async {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        SnackBar(
-                                          content: Text(
-                                            'Show Following',
-                                            style: FlutterFlowTheme.of(context)
-                                                .bodyText1,
+                                      await Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              UserFollowersWidget(
+                                            owner: profileUsersRecord,
                                           ),
-                                          duration:
-                                              Duration(milliseconds: 4000),
-                                          backgroundColor: Color(0x00000000),
-                                        ),
-                                      );
-                                    },
-                                    child: Container(
-                                      width: 75,
-                                      decoration: BoxDecoration(
-                                        color: FlutterFlowTheme.of(context)
-                                            .primaryColor,
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      child: Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                            0, 12, 0, 12),
-                                        child: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                              valueOrDefault<String>(
-                                                formatNumber(
-                                                  profileUsersRecord
-                                                      .followingCount,
-                                                  formatType:
-                                                      FormatType.compact,
-                                                ),
-                                                '0',
-                                              ),
-                                              style:
-                                                  FlutterFlowTheme.of(context)
-                                                      .title2
-                                                      .override(
-                                                        fontFamily: 'Lato',
-                                                        color: Colors.white,
-                                                        fontWeight:
-                                                            FontWeight.normal,
-                                                      ),
-                                            ),
-                                            Padding(
-                                              padding: EdgeInsetsDirectional
-                                                  .fromSTEB(0, 4, 0, 0),
-                                              child: Text(
-                                                'following',
-                                                style:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyText2
-                                                        .override(
-                                                          fontFamily: 'Lato',
-                                                          color: Colors.white,
-                                                          fontSize: 12,
-                                                        ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  InkWell(
-                                    onTap: () async {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        SnackBar(
-                                          content: Text(
-                                            'Show Folowers',
-                                            style: FlutterFlowTheme.of(context)
-                                                .bodyText1
-                                                .override(
-                                                  fontFamily: 'Lato',
-                                                  color: Colors.white,
-                                                ),
-                                          ),
-                                          duration:
-                                              Duration(milliseconds: 4000),
-                                          backgroundColor: Color(0x00000000),
                                         ),
                                       );
                                     },
@@ -443,6 +368,73 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                                                   .fromSTEB(0, 4, 0, 0),
                                               child: Text(
                                                 'followers',
+                                                style:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyText2
+                                                        .override(
+                                                          fontFamily: 'Lato',
+                                                          color: Colors.white,
+                                                          fontSize: 12,
+                                                        ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  InkWell(
+                                    onTap: () async {
+                                      await Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              UserFollowingWidget(
+                                            owner: profileUsersRecord,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    child: Container(
+                                      width: 75,
+                                      decoration: BoxDecoration(
+                                        color: FlutterFlowTheme.of(context)
+                                            .primaryColor,
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      child: Padding(
+                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                            0, 12, 0, 12),
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              valueOrDefault<String>(
+                                                formatNumber(
+                                                  profileUsersRecord
+                                                      .followingCount,
+                                                  formatType:
+                                                      FormatType.compact,
+                                                ),
+                                                '0',
+                                              ),
+                                              style:
+                                                  FlutterFlowTheme.of(context)
+                                                      .title2
+                                                      .override(
+                                                        fontFamily: 'Lato',
+                                                        color: Colors.white,
+                                                        fontWeight:
+                                                            FontWeight.normal,
+                                                      ),
+                                            ),
+                                            Padding(
+                                              padding: EdgeInsetsDirectional
+                                                  .fromSTEB(0, 4, 0, 0),
+                                              child: Text(
+                                                'following',
                                                 style:
                                                     FlutterFlowTheme.of(context)
                                                         .bodyText2
@@ -614,11 +606,12 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                                     if (!snapshot.hasData) {
                                       return Center(
                                         child: SizedBox(
-                                          width: 50,
-                                          height: 50,
-                                          child: CircularProgressIndicator(
+                                          width: 20,
+                                          height: 20,
+                                          child: SpinKitRipple(
                                             color: FlutterFlowTheme.of(context)
                                                 .primaryColor,
+                                            size: 20,
                                           ),
                                         ),
                                       );

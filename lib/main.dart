@@ -11,7 +11,9 @@ import 'flutter_flow/internationalization.dart';
 import 'package:btw_app/login/login_widget.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'home/home_widget.dart';
+import 'explore/explore_widget.dart';
 import 'profile/profile_widget.dart';
 
 void main() async {
@@ -115,6 +117,7 @@ class _NavBarPageState extends State<NavBarPage> {
   Widget build(BuildContext context) {
     final tabs = {
       'home': HomeWidget(),
+      'explore': ExploreWidget(),
       'profile': ProfileWidget(),
     };
     final currentIndex = tabs.keys.toList().indexOf(_currentPage);
@@ -136,6 +139,14 @@ class _NavBarPageState extends State<NavBarPage> {
               size: 24,
             ),
             label: 'Home',
+            tooltip: '',
+          ),
+          BottomNavigationBarItem(
+            icon: FaIcon(
+              FontAwesomeIcons.hotjar,
+              size: 24,
+            ),
+            label: 'Explore',
             tooltip: '',
           ),
           BottomNavigationBarItem(

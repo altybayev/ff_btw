@@ -15,6 +15,24 @@
       ]
     },
     {
+      "collectionGroup": "postComments",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "post",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "level",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "timePosted",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
       "collectionGroup": "storyComments",
       "queryScope": "COLLECTION",
       "fields": [
@@ -71,6 +89,24 @@
       ]
     },
     {
+      "collectionGroup": "feeds",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "userRef",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "rank",
+          "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "createdAt",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
       "collectionGroup": "postComments",
       "queryScope": "COLLECTION",
       "fields": [
@@ -93,7 +129,43 @@
           "order": "ASCENDING"
         },
         {
+          "fieldPath": "numLikes",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "numViews",
+          "order": "ASCENDING"
+        },
+        {
           "fieldPath": "timePosted",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "commentReplies",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "commentRef",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "createdAt",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "favorites",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "userRef",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "createdAt",
           "order": "DESCENDING"
         }
       ]

@@ -9,6 +9,7 @@ import '../post_details_copy/post_details_copy_widget.dart';
 import '../flutter_flow/custom_functions.dart' as functions;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class ViewProfilePageOtherWidget extends StatefulWidget {
@@ -37,10 +38,11 @@ class _ViewProfilePageOtherWidgetState
         if (!snapshot.hasData) {
           return Center(
             child: SizedBox(
-              width: 50,
-              height: 50,
-              child: CircularProgressIndicator(
+              width: 20,
+              height: 20,
+              child: SpinKitRipple(
                 color: FlutterFlowTheme.of(context).primaryColor,
+                size: 20,
               ),
             ),
           );
@@ -273,11 +275,12 @@ class _ViewProfilePageOtherWidgetState
                                     if (!snapshot.hasData) {
                                       return Center(
                                         child: SizedBox(
-                                          width: 50,
-                                          height: 50,
-                                          child: CircularProgressIndicator(
+                                          width: 20,
+                                          height: 20,
+                                          child: SpinKitRipple(
                                             color: FlutterFlowTheme.of(context)
                                                 .primaryColor,
+                                            size: 20,
                                           ),
                                         ),
                                       );
@@ -427,11 +430,12 @@ class _ViewProfilePageOtherWidgetState
                                   if (!snapshot.hasData) {
                                     return Center(
                                       child: SizedBox(
-                                        width: 50,
-                                        height: 50,
-                                        child: CircularProgressIndicator(
+                                        width: 20,
+                                        height: 20,
+                                        child: SpinKitRipple(
                                           color: FlutterFlowTheme.of(context)
                                               .primaryColor,
+                                          size: 20,
                                         ),
                                       ),
                                     );
@@ -472,14 +476,14 @@ class _ViewProfilePageOtherWidgetState
                                               if (!snapshot.hasData) {
                                                 return Center(
                                                   child: SizedBox(
-                                                    width: 50,
-                                                    height: 50,
-                                                    child:
-                                                        CircularProgressIndicator(
+                                                    width: 20,
+                                                    height: 20,
+                                                    child: SpinKitRipple(
                                                       color:
                                                           FlutterFlowTheme.of(
                                                                   context)
                                                               .primaryColor,
+                                                      size: 20,
                                                     ),
                                                   ),
                                                 );

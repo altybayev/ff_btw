@@ -16,10 +16,12 @@ import '../flutter_flow/flutter_flow_video_player.dart';
 import '../flutter_flow/flutter_flow_widgets.dart';
 import '../flutter_flow/upload_media.dart';
 import '../main.dart';
+import '../custom_code/actions/index.dart' as actions;
 import '../flutter_flow/custom_functions.dart' as functions;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -125,10 +127,11 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
           if (!snapshot.hasData) {
             return Center(
               child: SizedBox(
-                width: 50,
-                height: 50,
-                child: CircularProgressIndicator(
+                width: 20,
+                height: 20,
+                child: SpinKitRipple(
                   color: FlutterFlowTheme.of(context).primaryColor,
+                  size: 20,
                 ),
               ),
             );
@@ -248,13 +251,14 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                                                         if (!snapshot.hasData) {
                                                           return Center(
                                                             child: SizedBox(
-                                                              width: 50,
-                                                              height: 50,
+                                                              width: 20,
+                                                              height: 20,
                                                               child:
-                                                                  CircularProgressIndicator(
+                                                                  SpinKitRipple(
                                                                 color: FlutterFlowTheme.of(
                                                                         context)
                                                                     .primaryColor,
+                                                                size: 20,
                                                               ),
                                                             ),
                                                           );
@@ -345,10 +349,6 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                                                       );
                                                     },
                                                   );
-                                                  setState(() => FFAppState()
-                                                          .tagsCount =
-                                                      FFAppState().tagsCount +
-                                                          1);
                                                 },
                                               ),
                                           ],
@@ -372,14 +372,14 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                                               if (!snapshot.hasData) {
                                                 return Center(
                                                   child: SizedBox(
-                                                    width: 50,
-                                                    height: 50,
-                                                    child:
-                                                        CircularProgressIndicator(
+                                                    width: 20,
+                                                    height: 20,
+                                                    child: SpinKitRipple(
                                                       color:
                                                           FlutterFlowTheme.of(
                                                                   context)
                                                               .primaryColor,
+                                                      size: 20,
                                                     ),
                                                   ),
                                                 );
@@ -457,10 +457,6 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                                                                     await columnTagsRecord
                                                                         .reference
                                                                         .delete();
-                                                                    setState(() => FFAppState()
-                                                                            .tagsCount =
-                                                                        FFAppState().tagsCount -
-                                                                            1);
                                                                   },
                                                                   child: Icon(
                                                                     Icons.close,
@@ -657,14 +653,14 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                                               if (!snapshot.hasData) {
                                                 return Center(
                                                   child: SizedBox(
-                                                    width: 50,
-                                                    height: 50,
-                                                    child:
-                                                        CircularProgressIndicator(
+                                                    width: 20,
+                                                    height: 20,
+                                                    child: SpinKitRipple(
                                                       color:
                                                           FlutterFlowTheme.of(
                                                                   context)
                                                               .primaryColor,
+                                                      size: 20,
                                                     ),
                                                   ),
                                                 );
@@ -717,9 +713,13 @@ class _CreatePostWidgetState extends State<CreatePostWidget> {
                             await widget.postRef.update(userPostsUpdateData);
 
                             final usersUpdateData = {
-                              'posts_count': FieldValue.increment(1),
+                              'posts_count': FieldValue.increment(0),
                             };
                             await currentUserReference.update(usersUpdateData);
+                            await actions.addToFollowersFeed(
+                              widget.postRef,
+                              currentUserReference,
+                            );
                             await Navigator.pushAndRemoveUntil(
                               context,
                               PageTransition(
